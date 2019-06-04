@@ -32,6 +32,7 @@ public class CompetitionInfo {
     public int insertInfo(){
         Connection conn = DBConnection.getConn();
         PreparedStatement exec=null;
+        boolean release = false;
         if(conn==null)
             return 2;
         try{
@@ -49,10 +50,11 @@ public class CompetitionInfo {
         }catch (SQLException e){
             return 4;
         }finally {
-            if(!DBConnection.release(conn, exec, null))
-                return 5;
-            return 1;
+            release=DBConnection.release(conn, exec, null);
         }
+        if(!release)
+            return 5;
+        return 1;
     }
 
     @Override

@@ -14,6 +14,46 @@ public class Member {
     private String city;
     private int totalScore=-1;
 
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public int getTotalScore() {
+        return totalScore;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setTotalScore(int totalScore) {
+        this.totalScore = totalScore;
+    }
+
     public Member(int id, String name, String province, String city, int totalScore) {
         this.id = id;
         this.name = name;
@@ -37,6 +77,7 @@ public class Member {
         ResultSet r=null;
         if(DBConnection.judge(conn))
             return 2;
+        boolean release = false;
         try{
             conn.setAutoCommit(false);
             String querySQL = "SELECT * FROM CompetitionInformation WHERE memberId=?";
@@ -58,18 +99,19 @@ public class Member {
             }
         }catch (SQLException e){
             return 4;
+        }finally {
+            release=DBConnection.release(conn, exec, null);
         }
-        finally {
-            if(!DBConnection.release(conn, exec,r))
-                return 5;
-            return 1;
-        }
+        if(!release)
+            return 5;
+        return 1;
     }
 
     public static int getAllMembers(List<Member> res){
         Connection conn = DBConnection.getConn();
         PreparedStatement exec=null;
         ResultSet r=null;
+        boolean release = false;
         if(DBConnection.judge(conn))
             return 2;
         try{
@@ -91,11 +133,12 @@ public class Member {
             }
         }catch (SQLException e){
             return 4;
-        } finally {
-            if(!DBConnection.release(conn,exec,r))
-                return 5;
-            return 1;
+        }finally {
+            release=DBConnection.release(conn, exec, null);
         }
+        if(!release)
+            return 5;
+        return 1;
     }
 
     public int insertMember(){
@@ -103,6 +146,7 @@ public class Member {
             return 6;
         Connection conn = DBConnection.getConn();
         PreparedStatement exec=null;
+        boolean release = false;
         if(DBConnection.judge(conn))
             return 2;
         try{
@@ -120,11 +164,11 @@ public class Member {
         }catch (SQLException e){
             return 4;
         }finally {
-            if(!DBConnection.release(conn, exec, null)){
-                return 5;
-            }
-            return 1;
+            release=DBConnection.release(conn, exec, null);
         }
+        if(!release)
+            return 5;
+        return 1;
     }
 
     @Override
@@ -137,8 +181,5 @@ public class Member {
     }
 
     public static void main(String... args){
-        Member m = new Member("浮沉","阿卡林省","赣州",0);
-        int i = m.insertMember();
-        System.out.println(i);
     }
 }
