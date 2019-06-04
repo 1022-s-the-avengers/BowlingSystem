@@ -99,21 +99,21 @@ public class Member {
     }
 
     public int insertMember(){
-        if(id==0||name==null||province==null||city==null||totalScore==-1)
+        if(name==null||province==null||city==null)
             return 6;
         Connection conn = DBConnection.getConn();
         PreparedStatement exec=null;
-        ResultSet r = null;
-        if(!DBConnection.judge(conn))
+        if(DBConnection.judge(conn))
             return 2;
         try{
             conn.setAutoCommit(false);
-            String insertSQL = "INSERT INTO Member VALUE (?,?,?,?)";
+            String insertSQL = "INSERT INTO Member(name, province, city, totalScore) VALUE (?,?,?,?)";
             exec = conn.prepareStatement(insertSQL);
             exec.setString(1,name);
             exec.setString(2,province);
             exec.setString(3, city);
             exec.setInt(4, totalScore);
+            System.out.println(exec);
             if(exec.executeUpdate()!=1)
                 return 3;
             conn.commit();
@@ -137,10 +137,8 @@ public class Member {
     }
 
     public static void main(String... args){
-        ArrayList<Member> l = new ArrayList<>();
-        Member.getAllMembers(l);
-        for(Member m:l){
-            System.out.println(m);
-        }
+        Member m = new Member("浮沉","阿卡林省","赣州",0);
+        int i = m.insertMember();
+        System.out.println(i);
     }
 }
