@@ -12,7 +12,7 @@ public class Member {
     private String name;
     private String province;
     private String city;
-    private int totalScore;
+    private int totalScore=-1;
 
     public Member(int id, String name, String province, String city, int totalScore) {
         this.id = id;
@@ -94,6 +94,35 @@ public class Member {
         } finally {
             if(!DBConnection.release(conn,exec,r))
                 return 5;
+            return 1;
+        }
+    }
+
+    public int insertMember(){
+        if(id==0||name==null||province==null||city==null||totalScore==-1)
+            return 6;
+        Connection conn = DBConnection.getConn();
+        PreparedStatement exec=null;
+        ResultSet r = null;
+        if(!DBConnection.judge(conn))
+            return 2;
+        try{
+            conn.setAutoCommit(false);
+            String insertSQL = "INSERT INTO Member VALUE (?,?,?,?)";
+            exec = conn.prepareStatement(insertSQL);
+            exec.setString(1,name);
+            exec.setString(2,province);
+            exec.setString(3, city);
+            exec.setInt(4, totalScore);
+            if(exec.executeUpdate()!=1)
+                return 3;
+            conn.commit();
+        }catch (SQLException e){
+            return 4;
+        }finally {
+            if(!DBConnection.release(conn, exec, null)){
+                return 5;
+            }
             return 1;
         }
     }
