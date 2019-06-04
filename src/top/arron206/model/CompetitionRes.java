@@ -143,6 +143,10 @@ public abstract class CompetitionRes {
         exec.setInt(11, memberId);
     }
 
+    protected boolean judge(){
+        return getFirst()==-1||getSecond()==-1||getThird()==-1||getForth()==-1||getFifth()==-1||getSixth()==-1||getSeventh()==-1||getEighth()==-1||getNinth()==-1||getTenth()==-1;
+    }
+
     public abstract int insertRes();
 }
 
@@ -157,11 +161,11 @@ class SingleRes extends CompetitionRes{
 
     @Override
     public int insertRes() {
-        if(getFirst()==-1||getSecond()==-1||getThird()==-1||getForth()==-1||getFifth()==-1||getSixth()==-1||getSeventh()==-1||getEighth()==-1||getNinth()==-1||getTenth()==-1)
+        if(judge())
             return 6;
+        boolean release=false;
         Connection conn = DBConnection.getConn();
         PreparedStatement exec=null;
-        boolean release=false;
         if(conn==null)
             return 2;
         try{
@@ -193,6 +197,8 @@ class DoubleRes extends CompetitionRes{
 
     @Override
     public int insertRes() {
+        if(judge())
+            return 6;
         Connection conn = DBConnection.getConn();
         PreparedStatement exec=null;
         boolean release = false;
@@ -227,8 +233,10 @@ class TripleRes extends CompetitionRes{
 
     @Override
     public int insertRes() {
-        Connection conn = DBConnection.getConn();
+        if(judge())
+            return 6;
         PreparedStatement exec=null;
+        Connection conn = DBConnection.getConn();
         boolean release = false;
         if(conn==null)
             return 2;
@@ -262,9 +270,11 @@ class PentaRes extends CompetitionRes{
 
     @Override
     public int insertRes() {
+        if(judge())
+            return 6;
         Connection conn = DBConnection.getConn();
-        PreparedStatement exec=null;
         boolean release = false;
+        PreparedStatement exec=null;
         if(conn==null)
             return 2;
         try{

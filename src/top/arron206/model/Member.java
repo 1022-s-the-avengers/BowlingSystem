@@ -13,6 +13,10 @@ public class Member {
     private String province;
     private String city;
     private int totalScore=-1;
+    private CompetitionRes singleRes;
+    private CompetitionRes doubleRes;
+    private CompetitionRes tripleRes;
+    private CompetitionRes pentaRes;
 
     public int getId() {
         return id;
@@ -32,6 +36,22 @@ public class Member {
 
     public int getTotalScore() {
         return totalScore;
+    }
+
+    public CompetitionRes getSingleRes() {
+        return singleRes;
+    }
+
+    public CompetitionRes getDoubleRes() {
+        return doubleRes;
+    }
+
+    public CompetitionRes getTripleRes() {
+        return tripleRes;
+    }
+
+    public CompetitionRes getPentaRes() {
+        return pentaRes;
     }
 
     public void setId(int id) {
@@ -60,6 +80,10 @@ public class Member {
         this.province = province;
         this.city = city;
         this.totalScore = totalScore;
+        singleRes = new SingleRes(id);
+        doubleRes = new DoubleRes(id);
+        tripleRes = new TripleRes(id);
+        pentaRes = new PentaRes(id);
     }
 
     public Member(String name, String province, String city, int totalScore) {
@@ -67,6 +91,10 @@ public class Member {
         this.province = province;
         this.city = city;
         this.totalScore = totalScore;
+        singleRes = new SingleRes(id);
+        doubleRes = new DoubleRes(id);
+        tripleRes = new TripleRes(id);
+        pentaRes = new PentaRes(id);
     }
 
     public int getCompetitionInfo(List<CompetitionInfo> res){
@@ -170,6 +198,8 @@ public class Member {
             return 5;
         return 1;
     }
+
+
 
     @Override
     public String toString() {
