@@ -273,10 +273,9 @@ public class Member {
         this.totalScore = totalScore;
     }
 
-    public Member(String name, String province, int totalScore) {
+    public Member(String name, String province) {
         this.name = name;
         this.province = province;
-        this.totalScore = totalScore;
     }
 
     public int getCompetitionInfo(List<CompetitionInfo> res){
