@@ -215,6 +215,23 @@ public class Member {
         protected boolean judge(){
             return first==-1||second==-1||third==-1||forth==-1||fifth==-1||sixth==-1||seventh==-1||eighth==-1||ninth==-1||tenth==-1;
         }
+
+        @Override
+        public String toString() {
+            return  "  type=" + type +
+                    ", round=" + round +
+                    ", first=" + first +
+                    ", second=" + second +
+                    ", third=" + third +
+                    ", forth=" + forth +
+                    ", fifth=" + fifth +
+                    ", sixth=" + sixth +
+                    ", seventh=" + seventh +
+                    ", eighth=" + eighth +
+                    ", ninth=" + ninth +
+                    ", tenth=" + tenth +
+                    ", memberId=" + memberId ;
+        }
     }
 
     public int getId() {
@@ -301,6 +318,46 @@ public class Member {
         return 1;
     }
 
+    public CompetitionRes getMessage(int round, int type){
+        Connection conn = DBConnection.getConn();
+        PreparedStatement exec=null;
+        ResultSet r=null;
+        boolean release = false;
+        if(DBConnection.judge(conn))
+            return null;
+        try{
+            conn.setAutoCommit(false);
+            String querySQL = "SELECT * FROM CompetitionRes WHERE memberId = ? AND round = ? AND type = ?";
+            exec = conn.prepareStatement(querySQL);
+            exec.setInt(1, this.id);
+            exec.setInt(2,round);
+            exec.setInt(3,type);
+            r = exec.executeQuery();
+            conn.commit();
+            r.next();
+            return new CompetitionRes(
+                    r.getInt(1),
+                    r.getInt(2),
+                    r.getInt(3),
+                    r.getInt(4),
+                    r.getInt(5),
+                    r.getInt(6),
+                    r.getInt(7),
+                    r.getInt(8),
+                    r.getInt(9),
+                    r.getInt(10),
+                    r.getInt(11),
+                    r.getInt(12),
+                    r.getInt(13),
+                    r.getInt(14)
+            );
+        }catch (SQLException e){
+            return null;
+        }finally {
+            release=DBConnection.release(conn, exec, r);
+        }
+    }
+
     public static int getAllMembers(List<Member> res){
         Connection conn = DBConnection.getConn();
         PreparedStatement exec=null;
@@ -372,11 +429,5 @@ public class Member {
     }
 
     public static void main(String... args){
-        Member m = new Member("following", "江西", 0);
-        m.insertMember();
-//        Member m = new Member(1,"有问题", "江西","赣州",0);
-//        Member.CompetitionRes t = m.new CompetitionRes(1,2,3,4,5,6,7,8,9,10,2,1);
-//        int i = t.insertRes();
-//        System.out.println(i);
     }
 }
