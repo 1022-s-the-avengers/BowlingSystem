@@ -13,10 +13,210 @@ public class Member {
     private String province;
     private String city;
     private int totalScore=-1;
-    private CompetitionRes singleRes;
-    private CompetitionRes doubleRes;
-    private CompetitionRes tripleRes;
-    private CompetitionRes pentaRes;
+    private CompetitionRes res;
+
+    class CompetitionRes{
+        private int id;
+        private int first=-1;
+        private int second=-1;
+        private int third=-1;
+        private int forth=-1;
+        private int fifth=-1;
+        private int sixth=-1;
+        private int seventh=-1;
+        private int eighth=-1;
+        private int ninth=-1;
+        private int tenth=-1;
+        private int memberId;
+        private int type;
+        private int round;
+
+        public void setScore(int first, int second, int third, int forth, int fifth, int sixth, int seventh, int eighth, int ninth, int tenth){
+            this.first = first;
+            this.second = second;
+            this.third = third;
+            this.forth = forth;
+            this.fifth = fifth;
+            this.sixth = sixth;
+            this.seventh = seventh;
+            this.eighth = eighth;
+            this.ninth = ninth;
+            this.tenth = tenth;
+        }
+
+        public CompetitionRes(int id, int first, int second, int third, int forth, int fifth, int sixth, int seventh, int eighth, int ninth, int tenth, int memberId, int type, int round) {
+            this.id = id;
+            setScore(first,second,third,forth,fifth,sixth,seventh,eighth,ninth,tenth);
+            this.memberId = memberId;
+            this.type = type;
+            this.round = round;
+        }
+
+        public CompetitionRes(int first, int second, int third, int forth, int fifth, int sixth, int seventh, int eighth, int ninth, int tenth, int type,int round){
+            setScore(first,second,third,forth,fifth,sixth,seventh,eighth,ninth,tenth);
+            this.memberId = Member.this.id;
+            this.type = type;
+            this.round = round;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public int getFirst() {
+            return first;
+        }
+
+        public int getSecond() {
+            return second;
+        }
+
+        public int getThird() {
+            return third;
+        }
+
+        public int getForth() {
+            return forth;
+        }
+
+        public int getFifth() {
+            return fifth;
+        }
+
+        public int getSixth() {
+            return sixth;
+        }
+
+        public int getSeventh() {
+            return seventh;
+        }
+
+        public int getEighth() {
+            return eighth;
+        }
+
+        public int getNinth() {
+            return ninth;
+        }
+
+        public int getTenth() {
+            return tenth;
+        }
+
+        public int getMemberId() {
+            return memberId;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public int getRound() {
+            return round;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public void setFirst(int first) {
+            this.first = first;
+        }
+
+        public void setSecond(int second) {
+            this.second = second;
+        }
+
+        public void setThird(int third) {
+            this.third = third;
+        }
+
+        public void setForth(int forth) {
+            this.forth = forth;
+        }
+
+        public void setFifth(int fifth) {
+            this.fifth = fifth;
+        }
+
+        public void setSixth(int sixth) {
+            this.sixth = sixth;
+        }
+
+        public void setSeventh(int seventh) {
+            this.seventh = seventh;
+        }
+
+        public void setEighth(int eighth) {
+            this.eighth = eighth;
+        }
+
+        public void setNinth(int ninth) {
+            this.ninth = ninth;
+        }
+
+        public void setTenth(int tenth) {
+            this.tenth = tenth;
+        }
+
+        public void setMemberId(int memberId) {
+            this.memberId = memberId;
+        }
+
+        public void setType(int type) {
+            this.type = type;
+        }
+
+        public void setRound(int round) {
+            this.round = round;
+        }
+
+        protected void addElem(PreparedStatement exec) throws SQLException {
+            exec.setInt(1, first);
+            exec.setInt(2,second);
+            exec.setInt(3, third);
+            exec.setInt(4,forth);
+            exec.setInt(5, fifth);
+            exec.setInt(6, sixth);
+            exec.setInt(7, seventh);
+            exec.setInt(8, eighth);
+            exec.setInt(9, ninth);
+            exec.setInt(10, tenth);
+            exec.setInt(11, memberId);
+            exec.setInt(12,type);
+            exec.setInt(13, round);
+        }
+
+        public int insertRes() {
+            if(judge())
+                return 6;
+            boolean release=false;
+            Connection conn = DBConnection.getConn();
+            PreparedStatement exec=null;
+            if(conn==null)
+                return 2;
+            try{
+                conn.setAutoCommit(false);
+                String insertSQL = "INSERT INTO CompetitionRes(first, second, third, forth, fifth, sixth, seventh, eighth, ninth, tenth, memberId,type, round) VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                exec = conn.prepareStatement(insertSQL);
+                addElem(exec);
+                if(exec.executeUpdate()!=1)
+                    return 3;
+                conn.commit();
+            }catch (SQLException e){
+                return 4;
+            }finally {
+                release=DBConnection.release(conn, exec, null);
+            }
+            if(!release)
+                return 5;
+            return 1;
+        }
+
+        protected boolean judge(){
+            return first==-1||second==-1||third==-1||forth==-1||fifth==-1||sixth==-1||seventh==-1||eighth==-1||ninth==-1||tenth==-1;
+        }
+    }
 
     public int getId() {
         return id;
@@ -36,22 +236,6 @@ public class Member {
 
     public int getTotalScore() {
         return totalScore;
-    }
-
-    public CompetitionRes getSingleRes() {
-        return singleRes;
-    }
-
-    public CompetitionRes getDoubleRes() {
-        return doubleRes;
-    }
-
-    public CompetitionRes getTripleRes() {
-        return tripleRes;
-    }
-
-    public CompetitionRes getPentaRes() {
-        return pentaRes;
     }
 
     public void setId(int id) {
@@ -80,10 +264,6 @@ public class Member {
         this.province = province;
         this.city = city;
         this.totalScore = totalScore;
-        singleRes = new SingleRes(id);
-        doubleRes = new DoubleRes(id);
-        tripleRes = new TripleRes(id);
-        pentaRes = new PentaRes(id);
     }
 
     public Member(String name, String province, String city, int totalScore) {
@@ -91,10 +271,6 @@ public class Member {
         this.province = province;
         this.city = city;
         this.totalScore = totalScore;
-        singleRes = new SingleRes(id);
-        doubleRes = new DoubleRes(id);
-        tripleRes = new TripleRes(id);
-        pentaRes = new PentaRes(id);
     }
 
     public int getCompetitionInfo(List<CompetitionInfo> res){
@@ -210,5 +386,9 @@ public class Member {
     }
 
     public static void main(String... args){
+        Member m = new Member(1,"有问题", "江西","赣州",0);
+        Member.CompetitionRes t = m.new CompetitionRes(1,2,3,4,5,6,7,8,9,10,2,1);
+        int i = t.insertRes();
+        System.out.println(i);
     }
 }
