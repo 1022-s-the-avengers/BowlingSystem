@@ -46,9 +46,11 @@ public class DBConnection {
         return conn == null;
     }
 
+
+    protected  static void inti(Connection a){
+        a=DBConnection.getConn();
+    }
+
     public static void main(String... args) {
-        Connection conn = DBConnection.getConn();
-        assert conn != null;
-        System.out.println(conn.toString());
     }
 }

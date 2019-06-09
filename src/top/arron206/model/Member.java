@@ -117,18 +117,19 @@ public class Member {
                 res.add(
                         new CompetitionInfo(
                                 r.getInt(1),
-                                r.getInt(2),
+                                r.getString(2),
                                 r.getString(3),
                                 r.getInt(4),
                                 r.getInt(5),
-                                r.getInt(6)
+                                r.getInt(6),
+                                r.getInt(7)
                         )
                 );
             }
         }catch (SQLException e){
             return 4;
         }finally {
-            release=DBConnection.release(conn, exec, null);
+            release=DBConnection.release(conn, exec, r);
         }
         if(!release)
             return 5;
@@ -162,7 +163,7 @@ public class Member {
         }catch (SQLException e){
             return 4;
         }finally {
-            release=DBConnection.release(conn, exec, null);
+            release=DBConnection.release(conn, exec, r);
         }
         if(!release)
             return 5;
@@ -177,6 +178,7 @@ public class Member {
         boolean release = false;
         if(DBConnection.judge(conn))
             return 2;
+        ResultSet r = null;
         try{
             conn.setAutoCommit(false);
             String insertSQL = "INSERT INTO Member(name, province, city, totalScore) VALUE (?,?,?,?)";
@@ -185,21 +187,18 @@ public class Member {
             exec.setString(2,province);
             exec.setString(3, city);
             exec.setInt(4, totalScore);
-            System.out.println(exec);
             if(exec.executeUpdate()!=1)
                 return 3;
             conn.commit();
         }catch (SQLException e){
             return 4;
         }finally {
-            release=DBConnection.release(conn, exec, null);
+            release=DBConnection.release(conn, exec, r);
         }
         if(!release)
             return 5;
         return 1;
     }
-
-
 
     @Override
     public String toString() {

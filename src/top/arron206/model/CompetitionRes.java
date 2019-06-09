@@ -186,6 +186,7 @@ class SingleRes extends CompetitionRes{
         return 1;
     }
 }
+
 class DoubleRes extends CompetitionRes{
     public DoubleRes(int memberId) {
         super(memberId);
@@ -222,6 +223,7 @@ class DoubleRes extends CompetitionRes{
         return 1;
     }
 }
+
 class TripleRes extends CompetitionRes{
     public TripleRes(int memberId) {
         super(memberId);
