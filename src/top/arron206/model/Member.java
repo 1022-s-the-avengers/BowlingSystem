@@ -11,7 +11,6 @@ public class Member {
     private int id;
     private String name;
     private String province;
-    private String city;
     private int totalScore=-1;
     private CompetitionRes res;
 
@@ -230,10 +229,6 @@ public class Member {
         return province;
     }
 
-    public String getCity() {
-        return city;
-    }
-
     public int getTotalScore() {
         return totalScore;
     }
@@ -250,26 +245,20 @@ public class Member {
         this.province = province;
     }
 
-    public void setCity(String city) {
-        this.city = city;
-    }
-
     public void setTotalScore(int totalScore) {
         this.totalScore = totalScore;
     }
 
-    public Member(int id, String name, String province, String city, int totalScore) {
+    public Member(int id, String name, String province, int totalScore) {
         this.id = id;
         this.name = name;
         this.province = province;
-        this.city = city;
         this.totalScore = totalScore;
     }
 
-    public Member(String name, String province, String city, int totalScore) {
+    public Member(String name, String province, int totalScore) {
         this.name = name;
         this.province = province;
-        this.city = city;
         this.totalScore = totalScore;
     }
 
@@ -331,8 +320,7 @@ public class Member {
                                 r.getInt(1),
                                 r.getString(2),
                                 r.getString(3),
-                                r.getString(4),
-                                r.getInt(5)
+                                r.getInt(4)
                         )
                 );
             }
@@ -347,7 +335,7 @@ public class Member {
     }
 
     public int insertMember(){
-        if(name==null||province==null||city==null)
+        if(name==null||province==null)
             return 6;
         Connection conn = DBConnection.getConn();
         PreparedStatement exec=null;
@@ -357,12 +345,11 @@ public class Member {
         ResultSet r = null;
         try{
             conn.setAutoCommit(false);
-            String insertSQL = "INSERT INTO Member(name, province, city, totalScore) VALUE (?,?,?,?)";
+            String insertSQL = "INSERT INTO Member(name, province, totalScore) VALUE (?,?,?)";
             exec = conn.prepareStatement(insertSQL);
             exec.setString(1,name);
             exec.setString(2,province);
-            exec.setString(3, city);
-            exec.setInt(4, totalScore);
+            exec.setInt(3, totalScore);
             if(exec.executeUpdate()!=1)
                 return 3;
             conn.commit();
@@ -381,14 +368,15 @@ public class Member {
         return  "id=" + id +
                 ", name='" + name + '\'' +
                 ", province='" + province + '\'' +
-                ", city='" + city + '\'' +
                 ", totalScore=" + totalScore +"\n";
     }
 
     public static void main(String... args){
-        Member m = new Member(1,"有问题", "江西","赣州",0);
-        Member.CompetitionRes t = m.new CompetitionRes(1,2,3,4,5,6,7,8,9,10,2,1);
-        int i = t.insertRes();
-        System.out.println(i);
+        Member m = new Member("following", "江西", 0);
+        m.insertMember();
+//        Member m = new Member(1,"有问题", "江西","赣州",0);
+//        Member.CompetitionRes t = m.new CompetitionRes(1,2,3,4,5,6,7,8,9,10,2,1);
+//        int i = t.insertRes();
+//        System.out.println(i);
     }
 }
