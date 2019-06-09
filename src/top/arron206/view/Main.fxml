@@ -2,43 +2,22 @@
 
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.172-ea">
+<TabPane fx:controller="top.arron206.controller.GUIController.MainControl" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.172-ea">
   <tabs>
       <Tab text="成员信息">
         <content>
-          <fx:include source="MemberInformation.fxml"/>
+          <fx:include source="MemberInfo/GetMemberInformation.fxml"/>
         </content>
       </Tab>
-      <Tab text="开始比赛">
+      <Tab text="比赛开始">
         <content>
-            <fx:include source="MatchStart.fxml"/>
+            <fx:include fx:id="match" source = "Match/MatchStart.fxml"/>
         </content>
       </Tab>
-      <Tab text="单人排名">
+      <Tab text="排名信息">
         <content>
-            <fx:include source="SingleRank.fxml"/>
-        </content>
-      </Tab>
-      <Tab text="双人排名">
-        <content>
-          <fx:include source="DoubleRank.fxml"/>
-        </content>
-      </Tab>
-      <Tab text="三人排名">
-        <content>
-            <fx:include source="TriRank.fxml"/>
-        </content>
-      </Tab>
-      <Tab text="五人排名">
-        <content>
-            <fx:include source="FifthRank.fxml"/>
-        </content>
-      </Tab>
-      <Tab text="精英排名">
-        <content>
-            <fx:include source="EliteRank.fxml"/>
+            <fx:include source="Rank/RankInfomation.fxml"/>
         </content>
       </Tab>
   </tabs>
