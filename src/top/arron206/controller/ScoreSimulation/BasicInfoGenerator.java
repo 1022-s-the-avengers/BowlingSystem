@@ -1,13 +1,11 @@
 package top.arron206.controller.ScoreSimulation;
 
-import top.arron206.model.Member;
-
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class BasicInfoGenerator {
     public String getRandomName() {
-        ArrayList<String> familyName = (ArrayList<String>) Arrays.asList(
+        List<String> familyName = Arrays.asList(
                 "赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈",
                 "刘", "卫", "蒋", "沈", "韩", "杨", "朱", "秦", "尤", "许",
                 "何", "吕", "施", "张", "孔", "曹", "严", "华", "金", "魏",
@@ -18,7 +16,7 @@ public class BasicInfoGenerator {
                 "倪", "汤", "滕", "殷", "罗", "毕", "郝", "邬", "安", "常",
                 "乐", "于", "时", "傅", "皮", "卞", "齐", "康", "伍", "余",
                 "元", "卜", "顾", "孟", "平", "黄", "和", "穆", "萧", "尹");
-        ArrayList<String> firstName = (ArrayList<String>) Arrays.asList(
+        List<String> firstName = Arrays.asList(
                 "诗云", "飞风", "寄灵", "书芹", "幼蓉", "以蓝", "笑寒", "忆寒", "秋烟", "芷巧",
                 "水香", "映之", "醉波", "幻莲", "夜山", "芷卉", "向彤", "小玉", "幼南", "凡梦",
                 "尔曼", "念波", "迎松", "青寒", "笑天", "涵蕾", "碧菡", "映秋", "盼烟", "忆山",
@@ -33,7 +31,7 @@ public class BasicInfoGenerator {
     }
 
     public String getRandomProvince() {
-        ArrayList<String> province = (ArrayList<String>) Arrays.asList(
+        List<String> province = Arrays.asList(
                 "北京市", "天津市", "上海市", "重庆市", "河北省", "山西省",
                 "辽宁省", "吉林省", "黑龙江省", "江苏省", "浙江省", "安徽省",
                 "福建省", "江西省", "山东省", "河南省", "湖北省", "湖南省",

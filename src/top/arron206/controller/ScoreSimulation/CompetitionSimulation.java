@@ -26,4 +26,8 @@ public class CompetitionSimulation {
         BasicInfoGenerator basicInfoGenerator = new BasicInfoGenerator();
         Member member = new Member(basicInfoGenerator.getRandomName(), basicInfoGenerator.getRandomProvince());
     }
+    public static void main(String...args) {
+        CompetitionSimulation competitionSimulation = new CompetitionSimulation();
+        competitionSimulation.start();
+    }
 }
