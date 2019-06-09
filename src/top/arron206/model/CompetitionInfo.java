@@ -1,7 +1,5 @@
 package top.arron206.model;
 
-import top.arron206.controller.ScoreSimulation.Competition;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
