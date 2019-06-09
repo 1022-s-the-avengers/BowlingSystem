@@ -5,8 +5,8 @@ import top.arron206.model.Member;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class MemberInfoGenerator {
-    public String getName() {
+public class BasicInfoGenerator {
+    public String getRandomName() {
         ArrayList<String> familyName = (ArrayList<String>) Arrays.asList(
                 "赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈",
                 "刘", "卫", "蒋", "沈", "韩", "杨", "朱", "秦", "尤", "许",
@@ -32,7 +32,7 @@ public class MemberInfoGenerator {
         return familyName.get(RandIntegerGenerator.uniformRand(0, familyName.size())) + firstName.get(RandIntegerGenerator.uniformRand(0, firstName.size()));
     }
 
-    public String getProvince(ArrayList<Member> memberList) {
+    public String getRandoProvince(ArrayList<Member> memberList) {
         ArrayList<String> province = (ArrayList<String>) Arrays.asList(
                 "北京市", "天津市", "上海市", "重庆市", "河北省", "山西省",
                 "辽宁省", "吉林省", "黑龙江省", "江苏省", "浙江省", "安徽省",

@@ -11,8 +11,6 @@ public class PerRoundSimulator {
     private static Condition conditions[] = new Condition[21];
     //每轮投球得分
     private static int eachTurn[] = new int[10];
-    //当前选手编号
-    private static int number;
     //本次比赛选手实力情况
     private static int playerLevel[] = new int[60];
 
@@ -34,24 +32,23 @@ public class PerRoundSimulator {
     }
 
     //产生各种比赛信息
-    public void generate(int number) throws IllegalArgumentException {
-        if (number < 60)//编号不可大于60
-            this.number = number;
-        else
+    public void generate(String competitionType, int number, int round) throws IllegalArgumentException {
+        if (number > 60)//编号不可大于60
             throw new IllegalArgumentException("编号大于60");
         for (int i = 0; i < 21; ++i) {
             eachTime[i] = 0;
             conditions[i] = Condition.NULL;
         }
-        bowlingBall();
+        bowlingBall(number);
         calculateScore();
+        writeCompetitionInfo(competitionType, number, round);
     }
 
     //模拟投球，并记录情况
-    private static void bowlingBall() {
+    private static void bowlingBall(int number) {
         int first, second;
         for (int i = 0; i < 10; ++i) {
-            first = RandScore();//第一次投球
+            first = RandScore(number);//第一次投球
             if (first == 10) {//全中
                 eachTime[2 * i] = 10;
                 conditions[2 * i] = Condition.Strike;
@@ -61,18 +58,18 @@ public class PerRoundSimulator {
                 }
             } else //未全中或犯规
                 recordMissAndFoul(first, 2 * i);
-            second = RandScore();//第二次投球
+            second = RandScore(number);//第二次投球
             if (second == 10) {//补中
                 eachTime[2 * i + 1] = 10;
                 conditions[2 * i + 1] = Condition.Spare;
             } else //未补中或犯规
                 recordMissAndFoul(second, 2 * i + 1);
             if (conditions[18] == Condition.Strike || conditions[19] == Condition.Spare)//如果第十局全中或补中要开启第三局
-                recordMissAndFoul(RandScore(), 20);
+                recordMissAndFoul(RandScore(number), 20);
         }
     }
 
-    private static int RandScore() {
+    private static int RandScore(int number) {
         return RandIntegerGenerator.normalRand(-1, 10, playerLevel[number], 1);
     }
 
@@ -117,7 +114,7 @@ public class PerRoundSimulator {
         }
     }
 
-    public void writeCompetitionInfo(String competitionType, int round) {
+    private static void writeCompetitionInfo(String competitionType, int number, int round) {
         CompetitionInfo competitionInfo = new CompetitionInfo();
         StringBuffer description = new StringBuffer();
         for (int i = 0; i < 21; ++i) {
@@ -141,7 +138,7 @@ public class PerRoundSimulator {
         }
     }
 
-    public int[] getPlayerLevel() {
-        return playerLevel;
+    public int[] getEachTurn() {
+        return eachTurn;
     }
 }
