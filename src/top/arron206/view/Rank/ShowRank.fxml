@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefHeight="600.0" prefWidth="900.0">
+
+
+    <ScrollPane hbarPolicy="NEVER" prefHeight="560" prefWidth="900">
+        <FlowPane fx:id="rankShow" prefHeight="560" prefWidth="900" vgap="20" hgap="20" style="-fx-background-image: url(src/top/arron206/resources/gameGroup.jpg);-fx-background-size:contain;-fx-background-position: center; ">
+
+        </FlowPane>
+    </ScrollPane>
+    <Button fx:id="back" onAction="#back" layoutX="381.0" layoutY="450.0" mnemonicParsing="false" text="返回"  style="-fx-background-color:rgba(255,255,255,0.4);-fx-font-size: 37;"/>
+</Pane>
