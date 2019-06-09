@@ -1,5 +1,7 @@
 package top.arron206.model;
 
+import top.arron206.controller.ScoreSimulation.Competition;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +15,10 @@ public class CompetitionInfo {
     private int turn;
     private int times;
     private int memberId;
+
+    public CompetitionInfo(){
+        ;
+    }
 
     public CompetitionInfo(int id, String competitionType, String description, int round, int turn, int times, int memberId) {
         this.id = id;

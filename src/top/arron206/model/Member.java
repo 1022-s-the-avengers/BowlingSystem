@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Member {
@@ -12,94 +11,38 @@ public class Member {
     private String name;
     private String province;
     private int totalScore=-1;
-    private CompetitionRes res;
 
     class CompetitionRes{
         private int id;
-        private int first=-1;
-        private int second=-1;
-        private int third=-1;
-        private int forth=-1;
-        private int fifth=-1;
-        private int sixth=-1;
-        private int seventh=-1;
-        private int eighth=-1;
-        private int ninth=-1;
-        private int tenth=-1;
+        private int[] res = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
         private int memberId;
         private int type;
         private int round;
 
-        public void setScore(int first, int second, int third, int forth, int fifth, int sixth, int seventh, int eighth, int ninth, int tenth){
-            this.first = first;
-            this.second = second;
-            this.third = third;
-            this.forth = forth;
-            this.fifth = fifth;
-            this.sixth = sixth;
-            this.seventh = seventh;
-            this.eighth = eighth;
-            this.ninth = ninth;
-            this.tenth = tenth;
+        public void setMsg(int[] res,int type, int round){
+            this.res = res;
+            this.type = type;
+            this.round = round;
         }
 
-        public CompetitionRes(int id, int first, int second, int third, int forth, int fifth, int sixth, int seventh, int eighth, int ninth, int tenth, int memberId, int type, int round) {
+        public CompetitionRes(int id, int[] res, int memberId, int type, int round) {
             this.id = id;
-            setScore(first,second,third,forth,fifth,sixth,seventh,eighth,ninth,tenth);
+            setMsg(res,type,round);
             this.memberId = memberId;
-            this.type = type;
-            this.round = round;
+
         }
 
-        public CompetitionRes(int first, int second, int third, int forth, int fifth, int sixth, int seventh, int eighth, int ninth, int tenth, int type,int round){
-            setScore(first,second,third,forth,fifth,sixth,seventh,eighth,ninth,tenth);
+        public CompetitionRes(int[] res, int type,int round){
+            setMsg(res,type,round);
             this.memberId = Member.this.id;
-            this.type = type;
-            this.round = round;
         }
 
         public int getId() {
             return id;
         }
 
-        public int getFirst() {
-            return first;
-        }
-
-        public int getSecond() {
-            return second;
-        }
-
-        public int getThird() {
-            return third;
-        }
-
-        public int getForth() {
-            return forth;
-        }
-
-        public int getFifth() {
-            return fifth;
-        }
-
-        public int getSixth() {
-            return sixth;
-        }
-
-        public int getSeventh() {
-            return seventh;
-        }
-
-        public int getEighth() {
-            return eighth;
-        }
-
-        public int getNinth() {
-            return ninth;
-        }
-
-        public int getTenth() {
-            return tenth;
+        public int[] getRes() {
+            return res;
         }
 
         public int getMemberId() {
@@ -118,46 +61,6 @@ public class Member {
             this.id = id;
         }
 
-        public void setFirst(int first) {
-            this.first = first;
-        }
-
-        public void setSecond(int second) {
-            this.second = second;
-        }
-
-        public void setThird(int third) {
-            this.third = third;
-        }
-
-        public void setForth(int forth) {
-            this.forth = forth;
-        }
-
-        public void setFifth(int fifth) {
-            this.fifth = fifth;
-        }
-
-        public void setSixth(int sixth) {
-            this.sixth = sixth;
-        }
-
-        public void setSeventh(int seventh) {
-            this.seventh = seventh;
-        }
-
-        public void setEighth(int eighth) {
-            this.eighth = eighth;
-        }
-
-        public void setNinth(int ninth) {
-            this.ninth = ninth;
-        }
-
-        public void setTenth(int tenth) {
-            this.tenth = tenth;
-        }
-
         public void setMemberId(int memberId) {
             this.memberId = memberId;
         }
@@ -171,16 +74,9 @@ public class Member {
         }
 
         protected void addElem(PreparedStatement exec) throws SQLException {
-            exec.setInt(1, first);
-            exec.setInt(2,second);
-            exec.setInt(3, third);
-            exec.setInt(4,forth);
-            exec.setInt(5, fifth);
-            exec.setInt(6, sixth);
-            exec.setInt(7, seventh);
-            exec.setInt(8, eighth);
-            exec.setInt(9, ninth);
-            exec.setInt(10, tenth);
+            for(int i=0;i<10;i++){
+                exec.setInt(i+1, res[i]);
+            }
             exec.setInt(11, memberId);
             exec.setInt(12,type);
             exec.setInt(13, round);
@@ -213,23 +109,14 @@ public class Member {
         }
 
         protected boolean judge(){
-            return first==-1||second==-1||third==-1||forth==-1||fifth==-1||sixth==-1||seventh==-1||eighth==-1||ninth==-1||tenth==-1;
+            return res[0]==-1||res[1]==-1||res[2]==-1||res[3]==-1||res[4]==-1||res[5]==-1||res[6]==-1||res[7]==-1||res[8]==-1||res[9]==-1;
         }
 
         @Override
         public String toString() {
             return  "  type=" + type +
                     ", round=" + round +
-                    ", first=" + first +
-                    ", second=" + second +
-                    ", third=" + third +
-                    ", forth=" + forth +
-                    ", fifth=" + fifth +
-                    ", sixth=" + sixth +
-                    ", seventh=" + seventh +
-                    ", eighth=" + eighth +
-                    ", ninth=" + ninth +
-                    ", tenth=" + tenth +
+                    ", res" + res+
                     ", memberId=" + memberId ;
         }
     }
@@ -334,8 +221,7 @@ public class Member {
             r = exec.executeQuery();
             conn.commit();
             r.next();
-            return new CompetitionRes(
-                    r.getInt(1),
+            int[] res = {
                     r.getInt(2),
                     r.getInt(3),
                     r.getInt(4),
@@ -346,6 +232,10 @@ public class Member {
                     r.getInt(9),
                     r.getInt(10),
                     r.getInt(11),
+            };
+            return new CompetitionRes(
+                    r.getInt(1),
+                    res,
                     r.getInt(12),
                     r.getInt(13),
                     r.getInt(14)
