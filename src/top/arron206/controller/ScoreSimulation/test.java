@@ -1,14 +1,12 @@
 package top.arron206.controller.ScoreSimulation;
 
-import java.util.ArrayList;
-
 public class test {
     public static void main(String...args) {
-        ScoreGenerator scoreGenerator = ScoreGenerator.getInstance();
-        scoreGenerator.generate(1);
-        ArrayList<String> recordList = scoreGenerator.getBowlingRecord();
-        for (String e : recordList)
-            System.out.println(e);
-        System.out.println(scoreGenerator.getTotalScore());
+        var perRoundSimulator = PerRoundSimulator.getInstance();
+        for (int i = 1; i <= 20; ++i) {
+            System.out.println(perRoundSimulator.getPlayerLevel()[i]);
+            perRoundSimulator.generate(i);
+            perRoundSimulator.writeCompetitionInfo("精英赛", 4);
+        }
     }
 }
