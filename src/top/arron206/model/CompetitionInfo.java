@@ -1,7 +1,5 @@
 package top.arron206.model;
 
-import sun.rmi.server.InactiveGroupException;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
