@@ -1,13 +1,10 @@
 package top.arron206.model;
 
-import org.omg.PortableInterceptor.INACTIVE;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Group {
     private int groupId;
