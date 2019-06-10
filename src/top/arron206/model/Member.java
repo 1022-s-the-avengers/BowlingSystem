@@ -211,6 +211,33 @@ public class Member {
         this.id = id;
     }
 
+    public static int addAllRes(LinkedList<int[]> results){
+        Connection conn = DBConnection.getConn();
+        PreparedStatement exec=null;
+        boolean release = false;
+        if(conn==null)
+            return 2;
+        try{
+            conn.setAutoCommit(false);
+            String insertSQL = "";
+            exec = conn.prepareStatement(insertSQL);
+            int len = results.size();
+            for(int i=0;i<len;i++){
+                for(int j=0;j<13;j++) {
+                    exec.setInt(j+1, results.get(i)[j]);
+                }
+                exec.addBatch();
+                if((i!=0 && i%200==0)||i==len-1){
+                    exec.executeBatch();
+                    conn.commit();
+                    exec.clearBatch();
+                }
+            }
+        }catch (SQLException e){
+            return 4;
+        }
+    }
+
     public int getCompetitionInfo(List<CompetitionInfo> res){
         if(id == 0)
             return 6;

@@ -1,8 +1,5 @@
 package top.arron206.model;
 
-import javafx.scene.canvas.GraphicsContext;
-import sun.awt.image.ImageWatched;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
