@@ -132,7 +132,7 @@ public class PerRoundSimulator {
                     description.append(eachTime[i]);
                 competitionInfo.setDescription(description.toString());
                 System.out.println(competitionInfo);
-                //competitionInfo.insertInfo();
+                competitionInfo.insertInfo();
                 description.setLength(0);//清空字符串
             }
         }
