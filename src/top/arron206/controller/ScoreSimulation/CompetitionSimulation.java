@@ -8,10 +8,6 @@ public class CompetitionSimulation {
     private static ArrayList<Member> memberList = new ArrayList<>();
     private static PerRoundSimulator perRoundSimulator = PerRoundSimulator.getInstance();
 
-    public CompetitionSimulation() {
-
-    }
-
     public void start() {
         initializeMemberInfo();
         ordinaryCompetition("单人赛");
@@ -36,7 +32,10 @@ public class CompetitionSimulation {
             BasicInfoGenerator basicInfoGenerator = new BasicInfoGenerator();
             Member member = new Member(basicInfoGenerator.getRandomName(), basicInfoGenerator.getRandomProvince());
             memberList.add(member);
+            member.insertMember();
         }
+        memberList.clear();
+        Member.getAllMembers(memberList);
     }
 
     public static void main(String... args) {
