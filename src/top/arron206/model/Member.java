@@ -262,6 +262,21 @@ public class Member {
         }
     }
 
+    public static boolean returnMember(List<Member> res, ResultSet r) throws SQLException {
+        while(r.next()){
+            res.add(
+                    new Member(
+                            r.getInt(1),
+                            r.getString(2),
+                            r.getString(3),
+                            r.getInt(4),
+                            r.getInt(5)
+                    )
+            );
+        }
+        return true;
+    }
+
     public static int getAllMembers(List<Member> res){
         Connection conn = DBConnection.getConn();
         PreparedStatement exec=null;
@@ -275,17 +290,7 @@ public class Member {
             exec = conn.prepareStatement(querySQL);
             r = exec.executeQuery();
             conn.commit();
-            while(r.next()){
-                res.add(
-                        new Member(
-                                r.getInt(1),
-                                r.getString(2),
-                                r.getString(3),
-                                r.getInt(4),
-                                r.getInt(5)
-                        )
-                );
-            }
+            returnMember(res, r);
         }catch (SQLException e){
             return 4;
         }finally {
@@ -332,24 +337,77 @@ public class Member {
         return 1;
     }
 
+    public boolean insertOpt(Connection conn,int first, int second, String sql) throws SQLException {
+        conn.setAutoCommit(false);
+        PreparedStatement exec = conn.prepareStatement(sql);
+        exec.setInt(1, first);
+        exec.setInt(2, second);
+        if(exec.executeUpdate()!=1)
+            return false;
+        conn.commit();
+        return true;
+    }
+
     public int insertCredit(){
         if(credit==-1)
             return 6;
         Connection conn = DBConnection.getConn();
-        PreparedStatement exec=null;
         boolean release = false;
-        ResultSet r = null;
         if(DBConnection.judge(conn))
             return 2;
         try{
-            conn.setAutoCommit(false);
             String insertSQL = "UPDATE Member SET credit=? WHERE id = ?";
-            exec = conn.prepareStatement(insertSQL);
-            exec.setInt(1, credit);
-            exec.setInt(2, id);
-            if(exec.executeUpdate()!=1)
+            if(!insertOpt(conn,credit, id, insertSQL))
                 return 3;
+        }catch (SQLException e){
+            return 4;
+        }finally {
+            release=DBConnection.release(conn, null, null);
+        }
+        if(!release)
+            return 5;
+        return 1;
+    }
+
+    public int updateTotalSocre(){
+        if(totalScore==-1)
+            return 6;
+        Connection conn = DBConnection.getConn();
+        if(DBConnection.judge(conn))
+            return 2;
+        PreparedStatement exec=null;
+        boolean release = false;
+        ResultSet r = null;
+        try{
+            String insertSQL = "UPDATE Member SET totalScore=? WHERE id = ?";
+            if(!insertOpt(conn,totalScore,id,insertSQL))
+                return 3;
+        }catch (SQLException e){
+            return 4;
+        }finally {
+            release=DBConnection.release(conn, null, null);
+        }
+        if(!release)
+            return 5;
+        return 1;
+    }
+
+    public int getRank(List<Member> res){
+        PreparedStatement exec=null;
+        boolean release = false;
+        ResultSet r = null;
+        Connection conn = DBConnection.getConn();
+        if(DBConnection.judge(conn))
+            return 2;
+        if(credit==-1)
+            return 6;
+        try{
+            conn.setAutoCommit(false);
+            String querySQL = "SELECT * FROM Member GROUP BY totalScore";
+            exec = conn.prepareStatement(querySQL);
+            r = exec.executeQuery();
             conn.commit();
+            returnMember(res, r);
         }catch (SQLException e){
             return 4;
         }finally {
