@@ -1,10 +1,10 @@
 package top.arron206.controller.ScoreSimulation;
 
 import top.arron206.model.CompetitionInfo;
+import top.arron206.model.Group;
+import top.arron206.model.Member;
 
 public class PerRoundSimulator {
-    //类中对象的唯一实例
-    private static PerRoundSimulator instance = null;
     //每次投球倒瓶数
     private static int eachTime[] = new int[21];
     //每次投球情况
@@ -14,7 +14,7 @@ public class PerRoundSimulator {
     //本次比赛选手实力情况
     private static int playerLevel[] = new int[60];
 
-    private PerRoundSimulator() {
+    public PerRoundSimulator() {
         resetGenerator();
     }
 
@@ -24,24 +24,16 @@ public class PerRoundSimulator {
             playerLevel[i] = RandIntegerGenerator.uniformRand(1, 11);
     }
 
-    //单例模式
-    public static PerRoundSimulator getInstance() {
-        if (instance == null)
-            instance = new PerRoundSimulator();
-        return instance;
-    }
-
     //产生各种比赛信息
-    public void generate(String competitionType, int number, int round) throws IllegalArgumentException {
-        if (number > 60)//编号不可大于60
+    public void generate(String competitionType, Member member, int round) throws IllegalArgumentException {
+        if (member.getId() > 60)//编号不可大于60
             throw new IllegalArgumentException("编号大于60");
         for (int i = 0; i < 21; ++i) {
             eachTime[i] = 0;
             conditions[i] = Condition.NULL;
         }
-        bowlingBall(number);
+        bowlingBall(member.getId());
         calculateScore();
-        writeCompetitionInfo(competitionType, number, round);
     }
 
     //模拟投球，并记录情况
@@ -114,36 +106,33 @@ public class PerRoundSimulator {
         }
     }
 
-    private static void writeCompetitionInfo(String competitionType, int number, int round) {
+    public void getDescriptionAndFoul(int description, int foul, int round) {
+        int turn;
         CompetitionInfo competitionInfo = new CompetitionInfo();
-        StringBuffer description = new StringBuffer();
         for (int i = 0; i < 21; ++i) {
             if (conditions[i] != Condition.NULL) {
-                competitionInfo.setMemberId(number);//选手号码
-                competitionInfo.setCompetitionType(competitionType);//比赛类型
-                competitionInfo.setRound(round);//比赛局数
-                competitionInfo.setTurn(i / 2 + 1);//比赛轮数
+                if (conditions[i] == Condition.Foul)
+                    ++foul;
+                description = round * 100000;
+                turn = (i / 2 + 1);
+                if (turn != 10) //turn为10十位是0
+                        description += (turn * 10000);
                 if (i != 20)//比赛次数
-                    competitionInfo.setTimes(i % 2 + 1);
+                    description += ((i % 2 + 1) * 1000);
                 else
-                    competitionInfo.setTimes(3);
-                description.append(conditions[i]);
+                    description += (3 * 1000);
+                description += (conditions[i].ordinal() * 100);
                 if (conditions[i] == Condition.Miss) //部分命中要说明命中数量
-                    description.append(eachTime[i]);
-                competitionInfo.setDescription(description.toString());
-//                System.out.println(competitionInfo);
-                int s = competitionInfo.insertInfo();
-                System.out.println(s);
-                description.setLength(0);//清空字符串
+                    description +=eachTime[i];
             }
         }
     }
 
-    public int[] getEachTurn() {
+    public static int[] getEachTurn() {
         return eachTurn;
     }
 
-    public int getTotalScore() {
+    public static int getTotalScore() {
         int sum = 0;
         for (int e : eachTurn)
             sum += e;

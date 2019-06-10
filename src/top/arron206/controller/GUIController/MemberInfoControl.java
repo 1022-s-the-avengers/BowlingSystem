@@ -62,7 +62,7 @@ public class MemberInfoControl {
 
     void setMemberInfo(){
         for(int i=0 ; i<60 ;i++){
-            info.add(new Member(i,"sbjava","江西","南昌",0));
+//            info.add(new Member(i,"sbjava","江西",0,0));
         }
     }
 
@@ -81,7 +81,7 @@ public class MemberInfoControl {
             insert.add(new Label("省份: "),0,1);
             insert.add(new Label(man.getProvince()),1,1);
             insert.add(new Label("城市: "),2,1);
-            insert.add(new Label(man.getCity()),3,1);
+            insert.add(new Label(""),3,1);
             final int id = man.getId();
             insert.setOnMouseClicked(
                     e->{
@@ -104,7 +104,7 @@ public class MemberInfoControl {
         //输入框，按钮定义
         TextField nameField = new TextField(man.getName());
         TextField provinceField = new TextField(man.getProvince());
-        TextField cityField = new TextField(man.getCity());
+        TextField cityField = new TextField("");
         Button btConfirm = new Button("确认");
         //添加元素
         grid.add(new Label("id: "),0,0);
@@ -127,7 +127,7 @@ public class MemberInfoControl {
         btConfirm.setOnAction(e->{
             man.setName(nameField.getText());
             man.setProvince(provinceField.getText());
-            man.setCity(cityField.getText());
+//            man.setCity(cityField.getText());
             stage.close();
             setInfo();
         });
