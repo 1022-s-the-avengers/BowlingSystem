@@ -131,8 +131,9 @@ public class PerRoundSimulator {
                 if (conditions[i] == Condition.Miss) //部分命中要说明命中数量
                     description.append(eachTime[i]);
                 competitionInfo.setDescription(description.toString());
-                System.out.println(competitionInfo);
-                //competitionInfo.insertInfo();
+//                System.out.println(competitionInfo);
+                int s = competitionInfo.insertInfo();
+                System.out.println(s);
                 description.setLength(0);//清空字符串
             }
         }
