@@ -376,10 +376,8 @@ public class Member {
         ResultSet r = null;
         try{
             conn.setAutoCommit(false);
-            String querySQL = "SELECT * FROM Member WHERE name=? AND province=?";
+            String querySQL = "SELECT * FROM Member";
             exec = conn.prepareStatement(querySQL);
-            exec.setString(1,name);
-            exec.setString(2,province);
             ResultSet res = exec.executeQuery();
             if(res.next())
                 return 6;
@@ -410,6 +408,11 @@ public class Member {
         PreparedStatement exec=null;
         try{
             conn.setAutoCommit(false);
+            String querySQL = "SELECT * FROM Member";
+            exec = conn.prepareStatement(querySQL);
+            r = exec.executeQuery();
+            if(r.next())
+                return 6;
             String insertSQL = "INSERT INTO Member(name, province, totalScore) VALUE (?,?,-1)";
             exec = conn.prepareStatement(insertSQL);
             int len = names.size();
