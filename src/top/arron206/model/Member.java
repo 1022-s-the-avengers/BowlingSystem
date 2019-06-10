@@ -201,7 +201,7 @@ public class Member {
                         new CompetitionInfo(
                                 r.getInt(1),
                                 r.getString(2),
-                                r.getString(3),
+                                r.getInt(3),
                                 r.getInt(4)
                         )
                 );

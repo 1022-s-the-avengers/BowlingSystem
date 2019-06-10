@@ -8,21 +8,21 @@ import java.sql.SQLException;
 public class CompetitionInfo {
     private int id;
     private String competitionType;
-    private String description;
+    private int description;
     private int memberId;
 
     public CompetitionInfo(){
         ;
     }
 
-    public CompetitionInfo(int id, String competitionType, String description, int memberId) {
+    public CompetitionInfo(int id, String competitionType, int description, int memberId) {
         this.id = id;
         this.competitionType = competitionType;
         this.description = description;
         this.memberId = memberId;
     }
 
-    public CompetitionInfo(String competitionType, String description, int memberId) {
+    public CompetitionInfo(String competitionType, int description, int memberId) {
         this.competitionType = competitionType;
         this.description = description;
         this.memberId = memberId;
@@ -32,7 +32,7 @@ public class CompetitionInfo {
         this.competitionType = competitionType;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(int description) {
         this.description = description;
     }
 
@@ -48,7 +48,7 @@ public class CompetitionInfo {
         return competitionType;
     }
 
-    public String getDescription() {
+    public int getDescription() {
         return description;
     }
 
@@ -68,7 +68,7 @@ public class CompetitionInfo {
             String insertSQL = "INSERT INTO CompetitionInformation (competitionType, description, memberId) VALUE (?,?,?)";
             exec = conn.prepareStatement(insertSQL);
             exec.setString(1, competitionType);
-            exec.setString(2, description);
+            exec.setInt(2, description);
             exec.setInt(3, memberId);
             if(exec.executeUpdate()!=1)
                 return 3;
@@ -92,7 +92,7 @@ public class CompetitionInfo {
     }
 
     public static void main(String... args){
-        CompetitionInfo cpi = new CompetitionInfo("个人赛","无描述",1);
+        CompetitionInfo cpi = new CompetitionInfo("个人赛",111,1);
         cpi.insertInfo();
     }
 }
