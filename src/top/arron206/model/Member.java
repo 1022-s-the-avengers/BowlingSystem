@@ -392,18 +392,16 @@ public class Member {
         return 1;
     }
 
-    public int getRank(List<Member> res){
+    public static int getRank(List<Member> res){
         PreparedStatement exec=null;
         boolean release = false;
         ResultSet r = null;
         Connection conn = DBConnection.getConn();
         if(DBConnection.judge(conn))
             return 2;
-        if(credit==-1)
-            return 6;
         try{
             conn.setAutoCommit(false);
-            String querySQL = "SELECT * FROM Member GROUP BY totalScore";
+            String querySQL = "SELECT * FROM Member GROUP BY totalScore LIMIT 16";
             exec = conn.prepareStatement(querySQL);
             r = exec.executeQuery();
             conn.commit();
