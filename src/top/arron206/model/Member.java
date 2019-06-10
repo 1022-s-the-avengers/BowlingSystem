@@ -12,27 +12,27 @@ public class Member {
     private String province;
     private int totalScore=-1;
 
-    class CompetitionRes{
+    public class CompetitionRes{
         private int id;
         private int[] res = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
         private int memberId;
-        private int type;
+        private String type;
         private int round;
 
-        public void setMsg(int[] res,int type, int round){
+        public void setMsg(int[] res,String type, int round){
             this.res = res;
             this.type = type;
             this.round = round;
         }
 
-        public CompetitionRes(int id, int[] res, int memberId, int type, int round) {
+        public CompetitionRes(int id, int[] res, int memberId, String type, int round) {
             this.id = id;
             setMsg(res,type,round);
             this.memberId = memberId;
 
         }
 
-        public CompetitionRes(int[] res, int type,int round){
+        public CompetitionRes(int[] res, String type,int round){
             setMsg(res,type,round);
             this.memberId = Member.this.id;
         }
@@ -49,7 +49,7 @@ public class Member {
             return memberId;
         }
 
-        public int getType() {
+        public String getType() {
             return type;
         }
 
@@ -65,7 +65,7 @@ public class Member {
             this.memberId = memberId;
         }
 
-        public void setType(int type) {
+        public void setType(String type) {
             this.type = type;
         }
 
@@ -78,7 +78,7 @@ public class Member {
                 exec.setInt(i+1, res[i]);
             }
             exec.setInt(11, memberId);
-            exec.setInt(12,type);
+            exec.setString(12,type);
             exec.setInt(13, round);
         }
 
@@ -204,7 +204,7 @@ public class Member {
         return 1;
     }
 
-    public CompetitionRes getMessage(int round, int type){
+    public CompetitionRes getMessage(int round, String type){
         Connection conn = DBConnection.getConn();
         PreparedStatement exec=null;
         ResultSet r=null;
@@ -217,7 +217,7 @@ public class Member {
             exec = conn.prepareStatement(querySQL);
             exec.setInt(1, this.id);
             exec.setInt(2,round);
-            exec.setInt(3,type);
+            exec.setString(3,type);
             r = exec.executeQuery();
             conn.commit();
             r.next();
@@ -237,7 +237,7 @@ public class Member {
                     r.getInt(1),
                     res,
                     r.getInt(12),
-                    r.getInt(13),
+                    r.getString(13),
                     r.getInt(14)
             );
         }catch (SQLException e){
