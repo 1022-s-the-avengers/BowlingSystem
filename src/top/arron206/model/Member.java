@@ -235,7 +235,12 @@ public class Member {
             }
         }catch (SQLException e){
             return 4;
+        }finally {
+            release=DBConnection.release(conn, exec, r);
         }
+        if(!release)
+            return 5;
+        return 1;
     }
 
     public int getCompetitionInfo(List<CompetitionInfo> res){
