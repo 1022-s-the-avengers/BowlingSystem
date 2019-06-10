@@ -211,7 +211,7 @@ public class Member {
         this.id = id;
     }
 
-    public static int addAllRes(LinkedList<int[]> results){
+    public static int addAllRes(LinkedList<int[]> results, String type){
         Connection conn = DBConnection.getConn();
         PreparedStatement exec=null;
         boolean release = false;
@@ -223,9 +223,10 @@ public class Member {
             exec = conn.prepareStatement(insertSQL);
             int len = results.size();
             for(int i=0;i<len;i++){
-                for(int j=0;j<13;j++) {
+                for(int j=0;j<12;j++) {
                     exec.setInt(j+1, results.get(i)[j]);
                 }
+                exec.setString(13,type);
                 exec.addBatch();
                 if((i!=0 && i%200==0)||i==len-1){
                     exec.executeBatch();
