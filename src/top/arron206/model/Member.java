@@ -413,6 +413,28 @@ public class Member {
         return 1;
     }
 
+    public int getGruopId(String type){
+        ResultSet r = null;
+        PreparedStatement exec=null;
+        Connection conn = DBConnection.getConn();
+        if(DBConnection.judge(conn))
+            return 2;
+        boolean release = false;
+        try {
+            conn.setAutoCommit(false);
+            String querySQL = "SELECT * FROM GroupRelationship WHERE memberId = ? AND GroupRelationship.teamId IN (SELECT id FROM TeamInfo WHERE type=?)";
+            exec = conn.prepareStatement(querySQL);
+            exec.setInt(1, id);
+            exec.setString(2, type);
+            r = exec.executeQuery();
+            conn.commit();
+            r.next();
+            return r.getInt(3);
+        }catch (SQLException e){
+            return -1;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
