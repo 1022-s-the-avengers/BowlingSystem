@@ -1,5 +1,7 @@
 package top.arron206.model;
 
+import javafx.scene.canvas.GraphicsContext;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -159,6 +161,8 @@ public class Group {
             exec = conn.prepareStatement(insertSQL);
             exec.setInt(1,score);
             exec.setInt(2,groupId);
+            if(exec.executeUpdate()!=1)
+                return 3;
             conn.commit();
         }catch (SQLException e){
             return 4;
