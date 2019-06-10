@@ -113,7 +113,6 @@ public class CompetitionInfo {
                     exec.setInt(2,description.get(i*6+j));
                     exec.setInt(3, foul.get(i*6+j));
                     exec.setInt(4, i+1);
-                    System.out.println(exec);
                     exec.addBatch();
                     if(((i*6+j)!=0 && (i*6+j)%200==0) || i==len-1){
                         exec.executeBatch();

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,6 +14,9 @@ public class Member {
     private String province;
     private int totalScore=-1;
     private int credit = -1;
+    private int teamIdDouble;
+    private int teamIdTriple;
+    private int teamIdPenta;
 
     public class CompetitionRes{
         private int id;
@@ -143,6 +147,18 @@ public class Member {
         return credit;
     }
 
+    public int getTeamIdDouble() {
+        return teamIdDouble;
+    }
+
+    public int getTeamIdTriple() {
+        return teamIdTriple;
+    }
+
+    public int getTeamIdPenta() {
+        return teamIdPenta;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -163,12 +179,27 @@ public class Member {
         this.credit = credit;
     }
 
-    public Member(int id, String name, String province, int totalScore, int credit) {
+    public void setTeamIdDouble(int teamIdDouble) {
+        this.teamIdDouble = teamIdDouble;
+    }
+
+    public void setTeamIdTriple(int teamIdTriple) {
+        this.teamIdTriple = teamIdTriple;
+    }
+
+    public void setTeamIdPenta(int teamIdPenta) {
+        this.teamIdPenta = teamIdPenta;
+    }
+
+    public Member(int id, String name, String province, int totalScore, int credit, int teamIdDouble, int teamIdTriple, int teamIdPenta) {
         this.id = id;
         this.name = name;
         this.province = province;
         this.totalScore = totalScore;
         this.credit = credit;
+        this.teamIdDouble = teamIdDouble;
+        this.teamIdTriple = teamIdTriple;
+        this.teamIdPenta = teamIdPenta;
     }
 
     public Member(String name, String province) {
@@ -268,7 +299,10 @@ public class Member {
                             r.getString(2),
                             r.getString(3),
                             r.getInt(4),
-                            r.getInt(5)
+                            r.getInt(5),
+                            r.getInt(6),
+                            r.getInt(7),
+                            r.getInt(8)
                     )
             );
         }
@@ -329,6 +363,70 @@ public class Member {
             return 4;
         }finally {
             release=DBConnection.release(conn, exec, r);
+        }
+        if(!release)
+            return 5;
+        return 1;
+    }
+
+    public static int insertAllMember(LinkedList<String> names, LinkedList<String> provinces){
+        boolean release = false;
+        ResultSet r=null;
+        Connection conn = DBConnection.getConn();
+        if(DBConnection.judge(conn))
+            return 2;
+        PreparedStatement exec=null;
+        try{
+            conn.setAutoCommit(false);
+            String insertSQL = "INSERT INTO Member(name, province, totalScore) VALUE (?,?,-1)";
+            exec = conn.prepareStatement(insertSQL);
+            int len = names.size();
+            for(int i=0;i<len;i++){
+                exec.setString(1,names.get(i));
+                exec.setString(2,provinces.get(i));
+                exec.addBatch();
+                if(i==len-1 ){
+                    exec.executeBatch();
+                    conn.commit();
+                    exec.clearBatch();
+                }
+            }
+        }catch (SQLException e){
+            return 4;
+        }finally {
+            release=DBConnection.release(conn, exec, null);
+        }
+        if(!release)
+            return 5;
+        return 1;
+    }
+
+    public static int updateAllScore(LinkedList<Integer> memberIds, LinkedList<Integer> scores){
+        boolean release = false;
+        ResultSet r=null;
+        PreparedStatement exec=null;
+        Connection conn = DBConnection.getConn();
+        if(DBConnection.judge(conn))
+            return 2;
+        try{
+            conn.setAutoCommit(false);
+            String updateSQL = "UPDATE Member SET totalScore = ? WHERE id = ?";
+            exec = conn.prepareStatement(updateSQL);
+            int len = memberIds.size();
+            for(int i = 0; i < len ;i++){
+                exec.setInt(1,scores.get(i));
+                exec.setInt(2,memberIds.get(i));
+                exec.addBatch();
+                if(i==len-1 ){
+                    exec.executeBatch();
+                    conn.commit();
+                    exec.clearBatch();
+                }
+            }
+        }catch (SQLException e){
+            return 4;
+        }finally {
+            release=DBConnection.release(conn, exec, null);
         }
         if(!release)
             return 5;
@@ -412,28 +510,6 @@ public class Member {
         if(!release)
             return 5;
         return 1;
-    }
-
-    public int getGruopId(String type){
-        ResultSet r = null;
-        PreparedStatement exec=null;
-        Connection conn = DBConnection.getConn();
-        if(DBConnection.judge(conn))
-            return 2;
-        boolean release = false;
-        try {
-            conn.setAutoCommit(false);
-            String querySQL = "SELECT * FROM GroupRelationship WHERE memberId = ? AND GroupRelationship.teamId IN (SELECT id FROM TeamInfo WHERE type=?)";
-            exec = conn.prepareStatement(querySQL);
-            exec.setInt(1, id);
-            exec.setString(2, type);
-            r = exec.executeQuery();
-            conn.commit();
-            r.next();
-            return r.getInt(3);
-        }catch (SQLException e){
-            return -1;
-        }
     }
 
     @Override
