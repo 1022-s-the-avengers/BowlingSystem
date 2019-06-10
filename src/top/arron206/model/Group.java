@@ -1,5 +1,7 @@
 package top.arron206.model;
 
+import org.omg.PortableInterceptor.INACTIVE;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +12,7 @@ import java.util.List;
 public class Group {
     private int groupId;
     private String type;
+
     public Group(int groupId, String type) {
         this.groupId = groupId;
         this.type = type;
@@ -79,11 +82,11 @@ public class Group {
         return 1;
     }
 
-    public int addGroupMember(ArrayList<Member> members){
+    public int addGroupMember(ArrayList<Integer> membersId){
         Connection conn = DBConnection.getConn();
         if(DBConnection.judge(conn))
             return 2;
-        if(members == null)
+        if(membersId == null)
             return 6;
         ResultSet r=null;
         PreparedStatement exec=null;
@@ -91,8 +94,8 @@ public class Group {
         try{
             String insertSQL = "INSERT INTO GroupRelationship(memberId, teamId) VALUE (?,?)";
             exec = conn.prepareStatement(insertSQL);
-            for(int i=0;i<members.size();i++){
-                exec.setInt(1,members.get(i).getId());
+            for(int i=0;i<membersId.size();i++){
+                exec.setInt(1,membersId.get(i));
                 exec.setInt(2, groupId);
                 if(exec.executeUpdate()!=1)
                     return 3;
@@ -108,22 +111,57 @@ public class Group {
         return 1;
     }
 
-    public static int addGroup(String type,int teamNum){
+    public static int addGroup(String type){
         Connection conn = DBConnection.getConn();
         if(DBConnection.judge(conn))
             return 2;
         ResultSet r=null;
         PreparedStatement exec=null;
         boolean release = false;
+        int totalNum=0;
+        switch (type){
+            case "双人赛":
+                totalNum=30;
+                break;
+            case "三人赛":
+                totalNum=20;
+                break;
+            case "五人赛":
+                totalNum=12;
+                break;
+        }
         try{
             String insertSQL = "INSERT INTO TeamInfo(teamId, type) VALUE (?,?)";
-            for(int i=1;i<=teamNum;i++) {
+            for(int i=1;i<=totalNum;i++) {
                 exec = conn.prepareStatement(insertSQL);
                 exec.setInt(1,i);
                 exec.setString(2, type);
                 if(exec.executeUpdate()!=-1)
                     return 3;
             }
+            conn.commit();
+        }catch (SQLException e){
+            return 4;
+        }finally {
+            release=DBConnection.release(conn, exec, r);
+        }
+        if(!release)
+            return 5;
+        return 1;
+    }
+
+    public int updateTotalScore(int score){
+        ResultSet r=null;
+        PreparedStatement exec=null;
+        boolean release = false;
+        Connection conn = DBConnection.getConn();
+        if(DBConnection.judge(conn))
+            return 2;
+        try{
+            String insertSQL = "UPDATE TeamInfo SET totalScore=? WHERE id = ?";
+            exec = conn.prepareStatement(insertSQL);
+            exec.setInt(1,score);
+            exec.setInt(2,groupId);
             conn.commit();
         }catch (SQLException e){
             return 4;

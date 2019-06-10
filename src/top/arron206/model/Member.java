@@ -202,10 +202,7 @@ public class Member {
                                 r.getInt(1),
                                 r.getString(2),
                                 r.getString(3),
-                                r.getInt(4),
-                                r.getInt(5),
-                                r.getInt(6),
-                                r.getInt(7)
+                                r.getInt(4)
                         )
                 );
             }
@@ -438,5 +435,7 @@ public class Member {
     }
 
     public static void main(String... args){
+        int a = (int)3.1;
+        System.out.println(a);
     }
 }
