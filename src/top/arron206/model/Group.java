@@ -130,12 +130,13 @@ public class Group {
                 break;
         }
         try{
+            conn.setAutoCommit(false);
             String insertSQL = "INSERT INTO TeamInfo(teamId, type) VALUE (?,?)";
             for(int i=1;i<=totalNum;i++) {
                 exec = conn.prepareStatement(insertSQL);
                 exec.setInt(1,i);
                 exec.setString(2, type);
-                if(exec.executeUpdate()!=-1)
+                if(exec.executeUpdate()!=1)
                     return 3;
             }
             conn.commit();
