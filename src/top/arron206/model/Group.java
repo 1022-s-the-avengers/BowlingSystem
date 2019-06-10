@@ -64,7 +64,8 @@ public class Group {
                                 r.getInt(1),
                                 r.getString(2),
                                 r.getString(3),
-                                r.getInt(4)
+                                r.getInt(4),
+                                r.getInt(5)
                         )
                 );
             }
