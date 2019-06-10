@@ -142,4 +142,11 @@ public class PerRoundSimulator {
     public int[] getEachTurn() {
         return eachTurn;
     }
+
+    public int getTotalScore() {
+        int sum = 0;
+        for (int e : eachTurn)
+            sum += e;
+        return sum;
+    }
 }
