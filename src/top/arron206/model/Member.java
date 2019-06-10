@@ -5,12 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 public class Member {
     private int id;
     private String name;
     private String province;
     private int totalScore=-1;
+    private int credit = -1;
 
     public class CompetitionRes{
         private int id;
@@ -137,6 +139,10 @@ public class Member {
         return totalScore;
     }
 
+    public int getCredit() {
+        return credit;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -153,16 +159,25 @@ public class Member {
         this.totalScore = totalScore;
     }
 
-    public Member(int id, String name, String province, int totalScore) {
+    public void setCredit(int credit) {
+        this.credit = credit;
+    }
+
+    public Member(int id, String name, String province, int totalScore, int credit) {
         this.id = id;
         this.name = name;
         this.province = province;
         this.totalScore = totalScore;
+        this.credit = credit;
     }
 
     public Member(String name, String province) {
         this.name = name;
         this.province = province;
+    }
+
+    public Member(int id){
+        this.id = id;
     }
 
     public int getCompetitionInfo(List<CompetitionInfo> res){
@@ -266,7 +281,8 @@ public class Member {
                                 r.getInt(1),
                                 r.getString(2),
                                 r.getString(3),
-                                r.getInt(4)
+                                r.getInt(4),
+                                r.getInt(5)
                         )
                 );
             }
@@ -314,6 +330,47 @@ public class Member {
         if(!release)
             return 5;
         return 1;
+    }
+
+    public int insertCredit(){
+        if(credit==-1)
+            return 6;
+        Connection conn = DBConnection.getConn();
+        PreparedStatement exec=null;
+        boolean release = false;
+        ResultSet r = null;
+        if(DBConnection.judge(conn))
+            return 2;
+        try{
+            conn.setAutoCommit(false);
+            String insertSQL = "UPDATE Member SET credit=? WHERE id = ?";
+            exec = conn.prepareStatement(insertSQL);
+            exec.setInt(1, credit);
+            exec.setInt(2, id);
+            if(exec.executeUpdate()!=1)
+                return 3;
+            conn.commit();
+        }catch (SQLException e){
+            return 4;
+        }finally {
+            release=DBConnection.release(conn, exec, r);
+        }
+        if(!release)
+            return 5;
+        return 1;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Member)) return false;
+        Member member = (Member) o;
+        return getId() == member.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 
     @Override
