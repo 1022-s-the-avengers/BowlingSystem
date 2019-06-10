@@ -236,7 +236,7 @@ public class Member {
         }catch (SQLException e){
             return 4;
         }finally {
-            release=DBConnection.release(conn, exec, r);
+            release=DBConnection.release(conn, exec, null);
         }
         if(!release)
             return 5;
