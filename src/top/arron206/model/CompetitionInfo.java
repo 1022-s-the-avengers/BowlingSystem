@@ -9,22 +9,25 @@ public class CompetitionInfo {
     private int id;
     private String competitionType;
     private int description;
+    private int foul;
     private int memberId;
 
     public CompetitionInfo(){
         ;
     }
 
-    public CompetitionInfo(int id, String competitionType, int description, int memberId) {
+    public CompetitionInfo(int id, String competitionType, int description, int foul, int memberId) {
         this.id = id;
         this.competitionType = competitionType;
         this.description = description;
+        this.foul = foul;
         this.memberId = memberId;
     }
 
-    public CompetitionInfo(String competitionType, int description, int memberId) {
+    public CompetitionInfo(String competitionType, int description, int foul, int memberId) {
         this.competitionType = competitionType;
         this.description = description;
+        this.foul = foul;
         this.memberId = memberId;
     }
 
@@ -38,6 +41,10 @@ public class CompetitionInfo {
 
     public void setMemberId(int memberId) {
         this.memberId = memberId;
+    }
+
+    public void setFoul(int foul) {
+        this.foul = foul;
     }
 
     public int getId() {
@@ -56,6 +63,10 @@ public class CompetitionInfo {
         return memberId;
     }
 
+    public int getFoul() {
+        return foul;
+    }
+
     public int insertInfo(){
         ResultSet r = null;
         Connection conn = DBConnection.getConn();
@@ -65,11 +76,12 @@ public class CompetitionInfo {
             return 2;
         try{
             conn.setAutoCommit(false);
-            String insertSQL = "INSERT INTO CompetitionInformation (competitionType, description, memberId) VALUE (?,?,?)";
+            String insertSQL = "INSERT INTO CompetitionInformation (competitionType, description, foul, memberId) VALUE (?,?,?,?)";
             exec = conn.prepareStatement(insertSQL);
             exec.setString(1, competitionType);
             exec.setInt(2, description);
-            exec.setInt(3, memberId);
+            exec.setInt(3, foul);
+            exec.setInt(4, memberId);
             if(exec.executeUpdate()!=1)
                 return 3;
             conn.commit();
@@ -77,6 +89,39 @@ public class CompetitionInfo {
             return 4;
         }finally {
             release=DBConnection.release(conn, exec, r);
+        }
+        if(!release)
+            return 5;
+        return 1;
+    }
+
+    public static int insertList(String[] competitionType, int[] description, int[] foul, int[] memberId){
+        Connection conn = DBConnection.getConn();
+        PreparedStatement exec=null;
+        boolean release = false;
+        if(conn==null)
+            return 2;
+        try{
+            conn.setAutoCommit(false);
+            String sql = "INSERT INTO CompetitionInformation (competitionType, description, foul, memberId) VALUE (?,?,?,?)";
+            exec = conn.prepareStatement(sql);
+            int len = competitionType.length;
+            for(int i=0;i<len;i++){
+                exec.setString(1,competitionType[i]);
+                exec.setInt(2,description[i]);
+                exec.setInt(3, foul[i]);
+                exec.setInt(4,memberId[i]);
+                exec.addBatch();
+                if((i!=0 && i%200==0) || i==len-1){
+                    exec.executeBatch();
+                    conn.commit();
+                    exec.clearBatch();
+                }
+            }
+        }catch (SQLException e){
+            return 4;
+        }finally {
+            release=DBConnection.release(conn, exec, null);
         }
         if(!release)
             return 5;
@@ -92,7 +137,7 @@ public class CompetitionInfo {
     }
 
     public static void main(String... args){
-        CompetitionInfo cpi = new CompetitionInfo("个人赛",111,1);
+        CompetitionInfo cpi = new CompetitionInfo("个人赛",111, 1,1);
         cpi.insertInfo();
     }
 }

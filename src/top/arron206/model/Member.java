@@ -202,7 +202,8 @@ public class Member {
                                 r.getInt(1),
                                 r.getString(2),
                                 r.getInt(3),
-                                r.getInt(4)
+                                r.getInt(4),
+                                r.getInt(5)
                         )
                 );
             }
