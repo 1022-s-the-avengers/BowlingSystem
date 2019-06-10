@@ -9,13 +9,13 @@ import java.util.List;
 
 public class Group {
     private int groupId;
-    private int type;
-    public Group(int groupId, int type) {
+    private String type;
+    public Group(int groupId, String type) {
         this.groupId = groupId;
         this.type = type;
     }
 
-    public static int getRankList(ArrayList<Group> rank,int type){
+    public static int getRankList(ArrayList<Group> rank,String type){
         Connection conn = DBConnection.getConn();
         ResultSet r=null;
         boolean release = false;
@@ -25,12 +25,12 @@ public class Group {
         try{
             String querySQL = "SELECT * FROM TeamInfo WHERE type=? ORDER BY totalScore";
             exec = conn.prepareStatement(querySQL);
-            exec.setInt(1,type);
+            exec.setString(1,type);
             r = exec.executeQuery();
             while(r.next()){
                 rank.add(new Group(
                         r.getInt(1),
-                        r.getInt(2)
+                        r.getString(2)
                         )
                 );
             }
@@ -53,9 +53,10 @@ public class Group {
         if(DBConnection.judge(conn))
             return 2;
         try{
-            String querySQL = "SELECT * FROM Member WHERE id IN (SELECT memberId FROM GroupRelationship WHERE teamId = ?)";
+            String querySQL = "SELECT * FROM Member WHERE id IN (SELECT memberId FROM GroupRelationship WHERE teamId = ? AND type=?)";
             exec = conn.prepareStatement(querySQL);
-            exec.setInt(1,type);
+            exec.setInt(1, groupId);
+            exec.setString(2,type);
             r = exec.executeQuery();
             while(r.next()){
                 res.add(
@@ -91,7 +92,7 @@ public class Group {
             exec = conn.prepareStatement(insertSQL);
             for(int i=0;i<members.size();i++){
                 exec.setInt(1,members.get(i).getId());
-                exec.setInt(2, type);
+                exec.setInt(2, groupId);
                 if(exec.executeUpdate()!=1)
                     return 3;
             }
@@ -106,7 +107,7 @@ public class Group {
         return 1;
     }
 
-    public static int addGroup(int type,int teamNum){
+    public static int addGroup(String type,int teamNum){
         Connection conn = DBConnection.getConn();
         if(DBConnection.judge(conn))
             return 2;
@@ -118,7 +119,7 @@ public class Group {
             for(int i=1;i<=teamNum;i++) {
                 exec = conn.prepareStatement(insertSQL);
                 exec.setInt(1,i);
-                exec.setInt(2, type);
+                exec.setString(2, type);
                 if(exec.executeUpdate()!=-1)
                     return 3;
             }

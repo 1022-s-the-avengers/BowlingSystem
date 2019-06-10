@@ -291,6 +291,13 @@ public class Member {
         ResultSet r = null;
         try{
             conn.setAutoCommit(false);
+            String querySQL = "SELECT * FROM Member WHERE name=? AND province=?";
+            exec = conn.prepareStatement(querySQL);
+            exec.setString(1,name);
+            exec.setString(2,province);
+            ResultSet res = exec.executeQuery();
+            if(res.next())
+                return 6;
             String insertSQL = "INSERT INTO Member(name, province, totalScore) VALUE (?,?,?)";
             exec = conn.prepareStatement(insertSQL);
             exec.setString(1,name);
