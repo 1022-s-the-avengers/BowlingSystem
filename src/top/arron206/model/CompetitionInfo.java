@@ -1,9 +1,12 @@
 package top.arron206.model;
 
+import sun.rmi.server.InactiveGroupException;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 
 public class CompetitionInfo {
     private int id;
@@ -95,7 +98,7 @@ public class CompetitionInfo {
         return 1;
     }
 
-    public static int insertList(String[] competitionType, int[] description, int[] foul, int[] memberId){
+    public static int insertList(String competitionType, LinkedList<Integer> description, LinkedList<Integer> foul){
         Connection conn = DBConnection.getConn();
         PreparedStatement exec=null;
         boolean release = false;
@@ -105,17 +108,19 @@ public class CompetitionInfo {
             conn.setAutoCommit(false);
             String sql = "INSERT INTO CompetitionInformation (competitionType, description, foul, memberId) VALUE (?,?,?,?)";
             exec = conn.prepareStatement(sql);
-            int len = competitionType.length;
-            for(int i=0;i<len;i++){
-                exec.setString(1,competitionType[i]);
-                exec.setInt(2,description[i]);
-                exec.setInt(3, foul[i]);
-                exec.setInt(4,memberId[i]);
-                exec.addBatch();
-                if((i!=0 && i%200==0) || i==len-1){
-                    exec.executeBatch();
-                    conn.commit();
-                    exec.clearBatch();
+            int len = description.size();
+            for(int i=0;i<60;i++){
+                for(int j=1;j<=6;j++){
+                    exec.setString(1,competitionType);
+                    exec.setInt(2,description.get(i*6+j));
+                    exec.setInt(3, foul.get(i*6+j));
+                    exec.setInt(4, i+1);
+                    exec.addBatch();
+                    if(((i*6+j)!=0 && (i*6+j)%200==0) || i==len-1){
+                        exec.executeBatch();
+                        conn.commit();
+                        exec.clearBatch();
+                    }
                 }
             }
         }catch (SQLException e){
