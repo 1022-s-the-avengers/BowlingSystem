@@ -61,20 +61,7 @@ public class Group {
             exec.setInt(1, groupId);
             exec.setString(2,type);
             r = exec.executeQuery();
-            while(r.next()){
-                res.add(
-                        new Member(
-                                r.getInt(1),
-                                r.getString(2),
-                                r.getString(3),
-                                r.getInt(4),
-                                r.getInt(5),
-                                r.getInt(6),
-                                r.getInt(7),
-                                r.getInt(8)
-                        )
-                );
-            }
+            Member.generateMember(r, res);
         }catch (SQLException e){
             return 4;
         }finally {
@@ -243,17 +230,18 @@ public class Group {
             conn.setAutoCommit(false);
             String updateSQL = "UPDATE TeamInfo SET totalScore = ? WHERE id = ?";
             exec = conn.prepareStatement(updateSQL);
-            int len = scores.size();
-            for(int i=0;i<len;i++){
-                exec.setInt(1, scores.get(i));
-                exec.setInt(2, teamIds.get(i));
-                exec.addBatch();
-                if(i==len-1){
-                    exec.executeBatch();
-                    conn.commit();
-                    exec.clearBatch();
-                }
-            }
+            DBConnection.updateAll(conn, exec, scores, teamIds);
+//            int len = scores.size();
+//            for(int i=0;i<len;i++){
+//                exec.setInt(1, scores.get(i));
+//                exec.setInt(2, teamIds.get(i));
+//                exec.addBatch();
+//                if(i==len-1){
+//                    exec.executeBatch();
+//                    conn.commit();
+//                    exec.clearBatch();
+//                }
+//            }
         }catch (SQLException e){
             return 4;
         }finally {

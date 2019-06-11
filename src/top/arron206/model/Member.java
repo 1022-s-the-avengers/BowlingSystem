@@ -47,36 +47,8 @@ public class Member {
             return id;
         }
 
-        public int[] getRes() {
-            return res;
-        }
-
-        public int getMemberId() {
-            return memberId;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public int getRound() {
-            return round;
-        }
-
         public void setId(int id) {
             this.id = id;
-        }
-
-        public void setMemberId(int memberId) {
-            this.memberId = memberId;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public void setRound(int round) {
-            this.round = round;
         }
 
         protected void addElem(PreparedStatement exec) throws SQLException {
@@ -91,7 +63,7 @@ public class Member {
         public int insertRes() {
             if(judge())
                 return 6;
-            boolean release=false;
+            boolean release;
             Connection conn = DBConnection.getConn();
             PreparedStatement exec=null;
             if(conn==null)
@@ -114,7 +86,7 @@ public class Member {
             return 1;
         }
 
-        protected boolean judge(){
+        boolean judge(){
             return res[0]==-1||res[1]==-1||res[2]==-1||res[3]==-1||res[4]==-1||res[5]==-1||res[6]==-1||res[7]==-1||res[8]==-1||res[9]==-1;
         }
 
@@ -137,14 +109,6 @@ public class Member {
 
     public String getProvince() {
         return province;
-    }
-
-    public int getTotalScore() {
-        return totalScore;
-    }
-
-    public int getCredit() {
-        return credit;
     }
 
     public int getTeamIdDouble() {
@@ -171,24 +135,8 @@ public class Member {
         this.province = province;
     }
 
-    public void setTotalScore(int totalScore) {
-        this.totalScore = totalScore;
-    }
-
     public void setCredit(int credit) {
         this.credit = credit;
-    }
-
-    public void setTeamIdDouble(int teamIdDouble) {
-        this.teamIdDouble = teamIdDouble;
-    }
-
-    public void setTeamIdTriple(int teamIdTriple) {
-        this.teamIdTriple = teamIdTriple;
-    }
-
-    public void setTeamIdPenta(int teamIdPenta) {
-        this.teamIdPenta = teamIdPenta;
     }
 
     public Member(int id, String name, String province, int totalScore, int credit, int teamIdDouble, int teamIdTriple, int teamIdPenta) {
@@ -224,11 +172,9 @@ public class Member {
             int len = results.size();
             for(int i=0;i<len;i++){
                 for(int j=0;j<12;j++) {
-                    //System.out.println(results.get(i)[j]);
                     exec.setInt(j+1, results.get(i)[j]);
                 }
                 exec.setString(13,type);
-                //System.out.println(type);
                 exec.addBatch();
                 if((i!=0 && i%200==0)||i==len-1){
                     exec.executeBatch();
@@ -326,7 +272,7 @@ public class Member {
         }
     }
 
-    public static boolean returnMember(List<Member> res, ResultSet r) throws SQLException {
+    public static void generateMember(ResultSet r, List<Member> res) throws SQLException {
         while(r.next()){
             res.add(
                     new Member(
@@ -341,6 +287,10 @@ public class Member {
                     )
             );
         }
+    }
+
+    public static boolean returnMember(List<Member> res, ResultSet r) throws SQLException {
+        generateMember(r,res);
         return true;
     }
 
@@ -490,17 +440,18 @@ public class Member {
             conn.setAutoCommit(false);
             String sql = "UPDATE Member SET credit = ? WHERE id = ?";
             exec = conn.prepareStatement(sql);
-            int len = memberIds.size();
-            for(int i=0;i<len;i++){
-                exec.setInt(1, credits.get(i));
-                exec.setInt(2,memberIds.get(i));
-                exec.addBatch();
-                if(i==len-1){
-                    exec.executeBatch();
-                    conn.commit();
-                    exec.clearBatch();
-                }
-            }
+            DBConnection.updateAll(conn, exec, credits, memberIds);
+//            int len = memberIds.size();
+//            for(int i=0;i<len;i++){
+//                exec.setInt(1, credits.get(i));
+//                exec.setInt(2,memberIds.get(i));
+//                exec.addBatch();
+//                if(i==len-1){
+//                    exec.executeBatch();
+//                    conn.commit();
+//                    exec.clearBatch();
+//                }
+//            }
         }catch (SQLException e){
             return 4;
         }finally {
