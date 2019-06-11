@@ -6,9 +6,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 import top.arron206.Main;
 
@@ -40,11 +44,25 @@ public class MatchControl {
     //比赛进行中的信息
     Label conductInfo;
 
+    @FXML
+    FlowPane Group;
+
 
     @FXML
     protected void toNext(ActionEvent event) {
+
+        //判断是否确认成员信息
+        if(state==0 && MemberInfoControl.isConfirm!=1){
+            Alert information = new Alert(Alert.AlertType.INFORMATION,"请先确定成员信息！！");
+            information.setTitle("提示");
+            information.setHeaderText("比赛未开始：");
+            information.showAndWait();
+            return;
+        }
+
         MatchPane.getChildren().clear();
         state++;
+
         switch (state) {
             case 1:
             case 4:
@@ -53,7 +71,7 @@ public class MatchControl {
             case 12: toConduct();break;
             case 2:
             case 5:
-            case 8: loadfx("view/Match/MatchGroup.fxml");break; //toGroup
+            case 8: loadfx("view/Match/MatchGroup.fxml"); insertGroup(); break; //toGroup
             case 3:
             case 6:
             case 9:
@@ -113,6 +131,23 @@ public class MatchControl {
             MatchPane.getChildren().add(conduct);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    void insertGroup(){
+        for (int i = 0 ;i<60;i++){
+            GridPane in = new GridPane();
+            in.setStyle("-fx-pref-width: 420;-fx-pref-height: 60; -fx-background-color: rgba(0,0,0,0.1);-fx-font-size: 16");
+            in.setVgap(5);
+            in.setHgap(5);
+            in.setAlignment(Pos.CENTER);
+            in.add(new Label("id: "),0,0);
+            in.add(new Label("123"),1,0);
+            in.add(new Label("姓名: "),2,0);
+            in.add(new Label("abc"),3,0);
+            in.add(new Label("成绩: "),0,1);
+            in.add(new Label("123"),1,1);
+            Group.getChildren().add(in);
         }
     }
 

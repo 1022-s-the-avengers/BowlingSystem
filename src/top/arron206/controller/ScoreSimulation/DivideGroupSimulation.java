@@ -29,11 +29,11 @@ public class DivideGroupSimulation {
         return allGroupList;
     }
     public static void main(String...args) {
-        var groupList = getAllGroupList(30);
-        var memberList = getAllMemberList(groupList);
-        for (var e : memberList)
-            ;
-            //System.out.println(e);
+//        var groupList = getAllGroupList(30);
+//        var memberList = getAllMemberList(groupList);
+//        for (var e : memberList)
+//            ;
+//            //System.out.println(e);
 
     }
 }

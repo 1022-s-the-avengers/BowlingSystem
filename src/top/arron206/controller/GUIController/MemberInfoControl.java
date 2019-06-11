@@ -61,9 +61,9 @@ public class MemberInfoControl {
     }
 
     void setMemberInfo(){
-        for(int i=0 ; i<60 ;i++){
-//            info.add(new Member(i,"sbjava","江西",0,0));
-        }
+        int status = Member.getAllMembers(info);
+        System.out.print(status);
+        System.out.print(info);
     }
 
     void setInfo(){
@@ -80,8 +80,6 @@ public class MemberInfoControl {
             insert.add(new Label(man.getName()),3,0);
             insert.add(new Label("省份: "),0,1);
             insert.add(new Label(man.getProvince()),1,1);
-            insert.add(new Label("城市: "),2,1);
-            insert.add(new Label(""),3,1);
             final int id = man.getId();
             insert.setOnMouseClicked(
                     e->{
@@ -113,9 +111,7 @@ public class MemberInfoControl {
         grid.add(nameField,1,1);
         grid.add(new Label("省份: "),0,2);
         grid.add(provinceField,1,2);
-        grid.add(new Label("城市: "),0,3);
-        grid.add(cityField,1,3);
-        grid.add(btConfirm,1,4);
+        grid.add(btConfirm,1,3);
 
         Stage stage = new Stage();
         Scene scene = new Scene(grid,400,300);

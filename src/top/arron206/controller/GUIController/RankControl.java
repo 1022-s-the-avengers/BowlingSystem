@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
@@ -37,12 +38,38 @@ public class RankControl {
     //获取最新的排名信息，并加载排名页面
     void getRank(String text){
         switch (text){
-            case "单人赛排名" :;break;
-            case "双人赛排名" :;break;
-            case "三人赛排名" :;break;
-            case "五人赛排名" :;break;
-            case "精英赛排名" :;break;
+            case "单人赛排名" :
+                if(MatchControl.state<2){
+                    showNoMatch("单人赛还未进行");
+                    return;
+                }
+                break;
+            case "双人赛排名" :
+                if(MatchControl.state<2){
+                    showNoMatch("双人赛还未进行");
+                    return;
+                }
+                break;
+            case "三人赛排名" :
+                if(MatchControl.state<2){
+                    showNoMatch("三人赛还未进行");
+                    return;
+                }
+                break;
+            case "五人赛排名" :
+                if(MatchControl.state<2){
+                    showNoMatch("五人赛还未进行");
+                    return;
+                }
+                break;
+            case "精英赛排名" :
+                if(MatchControl.state<2){
+                    showNoMatch("精英赛还未进行");
+                    return;
+                }
+                break;
         }
+
         //清空mainPane，加载排名页面
         mainPane.getChildren().clear();
 
@@ -99,6 +126,13 @@ public class RankControl {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    void showNoMatch(String info){
+        Alert information = new Alert(Alert.AlertType.INFORMATION,info);
+        information.setTitle("提示");
+        information.setHeaderText("比赛未开始");
+        information.showAndWait();
     }
 
 
