@@ -1,7 +1,7 @@
 package top.arron206.controller.ScoreSimulation;
 
 public enum CompetitionType {
-    Singles("单人赛"), Doubles("双人赛"), Triples("三人赛"), Penta("五人赛");
+    Singles("单人赛"), Doubles("双人赛"), Triples("三人赛"), Penta("五人赛"), Classic("精英赛");
     String str;
 
     CompetitionType(String str) {
@@ -18,6 +18,8 @@ public enum CompetitionType {
                 return 3;
             case "五人赛":
                 return 5;
+            case "精英赛":
+                return 6;
         }
         return 0;
     }

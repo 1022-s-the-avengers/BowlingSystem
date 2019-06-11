@@ -15,6 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import top.arron206.Main;
+import top.arron206.controller.ScoreSimulation.CompetitionSimulation;
 import top.arron206.model.Member;
 
 
@@ -61,9 +62,9 @@ public class MemberInfoControl {
     }
 
     void setMemberInfo(){
-        int status = Member.getAllMembers(info);
-        System.out.print(status);
-        System.out.print(info);
+        CompetitionSimulation competitionSimulation = new CompetitionSimulation();
+        info = competitionSimulation.getMemberList();
+        System.out.println(info);
     }
 
     void setInfo(){
@@ -123,7 +124,7 @@ public class MemberInfoControl {
         btConfirm.setOnAction(e->{
             man.setName(nameField.getText());
             man.setProvince(provinceField.getText());
-//            man.setCity(cityField.getText());
+
             stage.close();
             setInfo();
         });

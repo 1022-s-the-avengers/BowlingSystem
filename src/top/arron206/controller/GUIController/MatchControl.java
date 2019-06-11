@@ -183,12 +183,15 @@ public class MatchControl {
 
         //设置动画
 
-
+        //球旋转
         RotateTransition rotateTransition =
                 new RotateTransition(Duration.millis(3000),ball);
         rotateTransition.setByAngle(360f);
         rotateTransition.setCycleCount(Timeline.INDEFINITE);
+
+        //球撞击
         
+
         ParallelTransition parallelTransition=new ParallelTransition(rotateTransition);
         parallelTransition.setCycleCount(Timeline.INDEFINITE);
         parallelTransition.play();

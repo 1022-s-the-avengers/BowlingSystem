@@ -7,6 +7,7 @@ import top.arron206.model.Member;
 import java.util.*;
 
 public class CompetitionSimulation {
+    public int status = 0;
     private int playerAmount = 60;
     private ArrayList<Member> memberList = new ArrayList<>();
     private PerRoundSimulator perRoundSimulator = new PerRoundSimulator();
@@ -42,6 +43,7 @@ public class CompetitionSimulation {
             Member.getAllMembers(memberList);//更新成员信息
         }
         ordinaryCompetitionSimulation(competitionType);
+        this.status = competitionType.getAmount();
     }
 
     public void classicCompetition() {
@@ -69,8 +71,9 @@ public class CompetitionSimulation {
                     credits[num2]++;
             }
         }
-        int i = CompetitionInfo.insertAllClassic(getClassicIdList(classicList), arrayToLinkedList(descriptions), arrayToLinkedList(fouls));
+        CompetitionInfo.insertAllClassic(getClassicIdList(classicList), arrayToLinkedList(descriptions), arrayToLinkedList(fouls));
         Member.insertAllCredit(getClassicIdList(classicList), arrayToLinkedList(credits));
+        this.status = CompetitionType.Classic.getAmount();
     }
 
     private LinkedList<Integer> arrayToLinkedList(int [] array) {

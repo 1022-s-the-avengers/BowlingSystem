@@ -19,7 +19,6 @@ public class Main extends Application{
     }
     public static void main(String...args) {
         Application.launch();
-//        CompetitionSimulation competitionSimulation = new CompetitionSimulation();
 //        competitionSimulation.ordinaryCompetition(CompetitionType.Singles);
 //        competitionSimulation.ordinaryCompetition(CompetitionType.Doubles);
 //        competitionSimulation.ordinaryCompetition(CompetitionType.Triples);
