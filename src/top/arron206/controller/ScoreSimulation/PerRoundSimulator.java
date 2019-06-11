@@ -1,46 +1,38 @@
 package top.arron206.controller.ScoreSimulation;
 
-import java.util.ArrayList;
-
 public class PerRoundSimulator {
     //每次投球倒瓶数
-    private static int eachTime[] = new int[21];
+    private int eachTime[] = new int[21];
     //每次投球情况
-    private static Condition conditions[] = new Condition[21];
+    private Condition conditions[] = new Condition[21];
     //每轮投球得分
-    private static int eachTurn[] = new int[10];
-    //本次比赛选手实力情况
-    private static ArrayList<Integer> playersLevel = new ArrayList<>();
+    private int eachTurn[] = new int[10];
     //每局比赛信息，0是一般描述信息，1是犯规次数，2是本局总分
-    private static int[] resultArray = new int[3];
-
-    public PerRoundSimulator(int amount) {
-        resetGenerator(amount);
-    }
-
-    //重新开始比赛，随机生成选手的实力情况
-    public static void resetGenerator(int amount) {
-        for (int i = 0; i < amount; ++i)
-            playersLevel.add(RandInteger.uniformRand(1, 11));
-    }
+    private int[] resultArray = new int[3];
+    //轮次
+    private int round;
+    //选手编号
+    private int number;
 
     //产生各种比赛信息
-    public void start(int number) {
+    public void start(int number, int level, int round) {
+        this.number = number;
+        this.round = round;
         for (int i = 0; i < 21; ++i) {
             eachTime[i] = 0;
             conditions[i] = Condition.NULL;
         }
         for (int i = 0; i < 3; ++i)
             resultArray[i] = 0;
-        bowlingBall(number);
+        bowlingBall(level);
         countRoundScore();
     }
 
     //模拟投球，并记录投球情况
-    private static void bowlingBall(int number) {
+    private void bowlingBall(int level) {
         int first, second;
         for (int i = 0; i < 10; ++i) {
-            first = getRandomScore(number);//第一次投球
+            first = getRandomScore(level);//第一次投球
             if (first == 10) {//全中
                 eachTime[2 * i] = 10;
                 conditions[2 * i] = Condition.Strike;
@@ -50,24 +42,24 @@ public class PerRoundSimulator {
                 }
             } else //未全中或犯规
                 recordMissAndFoul(first, 2 * i);
-            second = getRandomScore(number);//第二次投球
+            second = getRandomScore(level);//第二次投球
             if (second == 10) {//补中
                 eachTime[2 * i + 1] = 10;
                 conditions[2 * i + 1] = Condition.Spare;
             } else //未补中或犯规
                 recordMissAndFoul(second, 2 * i + 1);
             if (conditions[18] == Condition.Strike || conditions[19] == Condition.Spare)//如果第十局全中或补中要开启第三局
-                recordMissAndFoul(getRandomScore(number), 20);
+                recordMissAndFoul(getRandomScore(level), 20);
         }
     }
 
     //根据选手实力返回一个随机分数
-    private static int getRandomScore(int number) {
-        return RandInteger.normalRand(-1, 10, playersLevel.get(number - 1), 1);
+    private static int getRandomScore(int level) {
+        return RandInteger.normalRand(-1, 10, level, 1);
     }
 
     //处理部分命中或犯规。amount为倒瓶数，time为投球次序数
-    private static void recordMissAndFoul(int amount, int time) {
+    private void recordMissAndFoul(int amount, int time) {
         if (amount < 0) //记录犯规，倒瓶数视为0
             conditions[time] = Condition.Foul;
         else {
@@ -77,7 +69,7 @@ public class PerRoundSimulator {
     }
 
     //计算每轮得分
-    private static void countRoundScore() {
+    private void countRoundScore() {
         for (int i = 0; i < 10; ++i) {
             switch (conditions[2 * i]) {//第一次投球
                 case Strike://全中
@@ -108,7 +100,7 @@ public class PerRoundSimulator {
         }
     }
 
-    public int[] getResultArray(int round) {
+    public int[] getResultArray() {
         int turn;
         for (int i = 0; i < 21; ++i) {
             if (conditions[i] != Condition.NULL) {
@@ -133,7 +125,7 @@ public class PerRoundSimulator {
         return resultArray;
     }
 
-    public int[] getResArray(int number, int round) {
+    public int[] getResArray() {
         int[] resArray = new int[12];
         for (int i = 0; i < 10; ++i)
             resArray[i] = eachTurn[i];

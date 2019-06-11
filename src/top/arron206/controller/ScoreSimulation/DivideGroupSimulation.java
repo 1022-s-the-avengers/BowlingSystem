@@ -3,37 +3,34 @@ package top.arron206.controller.ScoreSimulation;
 import java.util.LinkedList;
 
 public class DivideGroupSimulation {
-    public static LinkedList<LinkedList<Integer>> getAllMemberList(LinkedList<Integer> allGroupList) {
+    //分组数量groupAmount和每组成员数量memberAmount
+    public static LinkedList<LinkedList<Integer>> getAllMembersList(int groupAmount, int memberAmount) {
+        if (groupAmount % groupAmount != 0)//必须除得尽
+            return null;
         int temp, j;
-        boolean[] flag = new boolean[61];
-        LinkedList<LinkedList<Integer>> allMemberList = new LinkedList<>();//队员成员信息
-        for (int i = 1; i <= allGroupList.size(); ++i) {
+        boolean[] isSelected = new boolean[groupAmount * memberAmount];
+        LinkedList<LinkedList<Integer>> allMembersList = new LinkedList<>();//队员成员信息
+        for (int i = 1; i <= groupAmount; ++i) {
             j = 0;
             LinkedList<Integer> memberList = new LinkedList<>();
             do {
                 temp = RandInteger.uniformRand(1, 60);
-                if (!flag[temp]) {
+                if (!isSelected[temp]) {
                     memberList.add(temp);
-                    flag[temp] = true;
+                    isSelected[temp] = true;
                     ++j;
                 }
-            } while (j < (60/allGroupList.size()));
-            allMemberList.add(memberList);
+            } while (j < memberAmount);
+            allMembersList.add(memberList);
         }
-        return allMemberList;
+        return allMembersList;
     }
-    public static LinkedList<Integer> getAllGroupList(int amount) {
+
+    //返回一个顺序序号列表
+    public static LinkedList<Integer> getOrderIntegerList(int amount) {
         LinkedList<Integer> allGroupList = new LinkedList<>();
         for (int i = 1; i <= amount; ++i)
             allGroupList.add(i);
         return allGroupList;
-    }
-    public static void main(String...args) {
-//        var groupList = getAllGroupList(30);
-//        var memberList = getAllMemberList(groupList);
-//        for (var e : memberList)
-//            ;
-//            //System.out.println(e);
-
     }
 }
