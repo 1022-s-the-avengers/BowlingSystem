@@ -148,13 +148,12 @@ public class CompetitionInfo {
                     exec.setInt(2,descriptions.get(i*15+j));
                     exec.setInt(3,fouls.get(i*15+j));
                     exec.setInt(4,memberIds.get(i));
-                }
-                if(i==len-1){
-                    exec.executeBatch();
-                    conn.commit();
-                    exec.clearBatch();
+                    exec.addBatch();
                 }
             }
+            exec.executeBatch();
+            conn.commit();
+            exec.clearBatch();
         }catch (SQLException e){
             return 4;
         }finally {
