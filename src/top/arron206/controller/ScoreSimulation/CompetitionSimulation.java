@@ -1,67 +1,116 @@
 package top.arron206.controller.ScoreSimulation;
 
+import top.arron206.model.CompetitionInfo;
+import top.arron206.model.Group;
 import top.arron206.model.Member;
 import java.util.*;
 
 public class CompetitionSimulation {
     private static ArrayList<Member> memberList = new ArrayList<>();
     private static ArrayList<Member> classicList = new ArrayList<>();
-    private static PerRoundSimulator perRoundSimulator = new PerRoundSimulator();
-    private static int[] descriptions = new int[60];
-    private static int[] fouls= new int[60];
-
+    private static PerRoundSimulator perRoundSimulator = new PerRoundSimulator(60);
+    private static LinkedList<Integer> descriptions = new LinkedList<>();
+    private static LinkedList<Integer> fouls= new LinkedList<>();
+    private static LinkedList<Integer> totalScore= new LinkedList<>();
+    private static int[] resultArray = new int[3];
     public void start() {
+        LinkedList<Integer> allGroupList;
         initializeMemberInfo();
         ordinaryCompetition("单人赛");
-        DivideGroupSimulation.divideGroup("双人赛");
+        Group.addGroup("双人赛");
+        allGroupList = DivideGroupSimulation.getAllGroupList(30);
+        Group.addGroupList(DivideGroupSimulation.getAllMemberList(allGroupList), allGroupList, "双人赛");
+        memberList.clear();
+        Member.getAllMembers(memberList);
         ordinaryCompetition("双人赛");
-        DivideGroupSimulation.divideGroup("三人赛");
+        Group.addGroup("三人赛");
+        allGroupList = DivideGroupSimulation.getAllGroupList(20);
+        Group.addGroupList(DivideGroupSimulation.getAllMemberList(allGroupList), allGroupList, "三人赛");
+        memberList.clear();
+        Member.getAllMembers(memberList);
         ordinaryCompetition("三人赛");
-        DivideGroupSimulation.divideGroup("五人赛");
+        Group.addGroup("五人赛");
+        allGroupList = DivideGroupSimulation.getAllGroupList(12);
+        Group.addGroupList(DivideGroupSimulation.getAllMemberList(allGroupList), allGroupList, "五人赛");
+        memberList.clear();
+        Member.getAllMembers(memberList);
         ordinaryCompetition("五人赛");
         Member.getRank(classicList);
         classicCompetition();
     }
 
     private void ordinaryCompetition(String competitionType) {
-        int description = 0, foul = 0, j = 0;
+        LinkedList<Integer> allGroupScoreList = getAllGroupScoreList(competitionType);
+        LinkedList<int []> perRoundScoreList = new LinkedList<>();
         for (Member e : memberList) {
-            ++j;
             for (int i = 1; i <= 6; ++i) {
-                perRoundSimulator.generate(competitionType, e, i);//生成每局比赛信息
-                perRoundSimulator.getDescriptionAndFoul(description, foul, i);
-                descriptions[j] = description;
-                fouls[j] = foul;
-                if (e.getTotalScore() > 0)
-                    e.setTotalScore(e.getTotalScore() + perRoundSimulator.getTotalScore());
-                else
-                    e.setTotalScore(perRoundSimulator.getTotalScore());
-                e.updateTotalSocre();
-                Member.CompetitionRes res = e.new CompetitionRes(perRoundSimulator.getEachTurn(), competitionType, i);
-                e.insertMember();
-                res.insertRes();
+                perRoundSimulator.start(e.getId());//生成每局比赛信息
+                resultArray = perRoundSimulator.getResultArray(i);
+                //System.out.println(resultArray[2]);
+                descriptions.add(resultArray[0]);
+                fouls.add(resultArray[1]);
+                totalScore.add(resultArray[2]);
+                if (!competitionType.equals("单人赛"))
+                    allGroupScoreList.set(getGroupId(competitionType, e) - 1, (allGroupScoreList.get(getGroupId(competitionType, e) - 1) + resultArray[2]));//团队总分累加
+                perRoundScoreList.add(perRoundSimulator.getResArray(e.getId(), i));
             }
         }
+        int iii = Member.addAllRes(perRoundScoreList, competitionType);
+        System.out.println(iii);
+        Member.updateAllScore(DivideGroupSimulation.getAllGroupList(60),totalScore);
+        CompetitionInfo.insertList(competitionType, descriptions, fouls);
+        if (!competitionType.equals("单人赛")) {
+            Group.updateTotalScoreList(allGroupScoreList, getAllGroupScoreList(competitionType));
+        }
+    }
+    private LinkedList<Integer> getAllGroupScoreList(String competitionType) {
+        switch (competitionType) {
+            case "双人赛" :
+                return DivideGroupSimulation.getAllGroupList(30);
+            case "三人赛" :
+                return DivideGroupSimulation.getAllGroupList(20);
+            case "五人赛" :
+                return DivideGroupSimulation.getAllGroupList(12);
+        }
+        return null;
+    }
+
+    private int getGroupId(String competitionType, Member member) {
+        switch (competitionType) {
+            case "双人赛" :
+                return member.getTeamIdDouble();
+            case "三人赛" :
+                return member.getTeamIdTriple();
+            case "五人赛" :
+                return member.getTeamIdPenta();
+        }
+        return 0;
     }
 
     private void classicCompetition() {
         int credits[] = new int[16];
         int totalScore1, totalScore2;
         for (int num1 = 0; num1 < 16; ++num1) {
-            for (int num2 = 0; num2 < 16; ++num2) {
+            for (int num2 = num1; num2 < 16; ++num2) {
                 if (num1 == num2)
                     continue;
-                perRoundSimulator.generate("精英赛", classicList.get(num1), 1);
-                totalScore1 = perRoundSimulator.getTotalScore();
-                perRoundSimulator.generate("精英赛", classicList.get(num2), 1);
-                totalScore2 = perRoundSimulator.getTotalScore();
+                perRoundSimulator.start(classicList.get(num1).getId());
+                totalScore1 = perRoundSimulator.getResultArray(1)[2];
+                perRoundSimulator.start(classicList.get(num2).getId());
+                totalScore2 = perRoundSimulator.getResultArray(1)[2];
                 if (totalScore1 > totalScore2)
                     credits[num1]++;
                 else
                     credits[num2]++;
             }
         }
-        insertCredit(credits);
+        LinkedList<Integer> classicNumberList = new LinkedList<>();
+        for (Member e : classicList)
+            classicNumberList.add(e.getId());
+        LinkedList<Integer> avc = new LinkedList<>();
+        for (int e : credits)
+            avc.add(e);
+        Member.insertAllCredit(classicNumberList, avc);
     }
 
     private void insertCredit (int[] credits) {
@@ -73,13 +122,7 @@ public class CompetitionSimulation {
         }
     }
     private void initializeMemberInfo() {
-        for (int i = 1; i <= 60; ++i) {
-            BasicInfoGenerator basicInfoGenerator = new BasicInfoGenerator();
-            Member member = new Member(basicInfoGenerator.getRandomName(), basicInfoGenerator.getRandomProvince());
-            memberList.add(member);
-            member.insertMember();
-        }
-        memberList.clear();
+        Member.insertAllMember(BasicInfoGenerator.getNameList(60), BasicInfoGenerator.getProvinceList(60));
         Member.getAllMembers(memberList);
     }
 

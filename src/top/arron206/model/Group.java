@@ -146,11 +146,11 @@ public class Group {
                     exec.setInt(1, teamIds.get(i));
                     exec.setInt(2,memberIds.get(i).get(j));
                     exec.addBatch();
-                    if(i==len-1){
-                        exec.executeBatch();
-                        conn.commit();
-                        exec.clearBatch();
-                    }
+                }
+                if(i==len-1){
+                    exec.executeBatch();
+                    conn.commit();
+                    exec.clearBatch();
                 }
             }
         }catch (SQLException e){

@@ -1,8 +1,6 @@
 package top.arron206.controller.ScoreSimulation;
 
-import top.arron206.model.CompetitionInfo;
-import top.arron206.model.Group;
-import top.arron206.model.Member;
+import java.util.ArrayList;
 
 public class PerRoundSimulator {
     //每次投球倒瓶数
@@ -12,35 +10,37 @@ public class PerRoundSimulator {
     //每轮投球得分
     private static int eachTurn[] = new int[10];
     //本次比赛选手实力情况
-    private static int playerLevel[] = new int[60];
+    private static ArrayList<Integer> playersLevel = new ArrayList<>();
+    //每局比赛信息，0是一般描述信息，1是犯规次数，2是本局总分
+    private static int[] resultArray = new int[3];
 
-    public PerRoundSimulator() {
-        resetGenerator();
+    public PerRoundSimulator(int amount) {
+        resetGenerator(amount);
     }
 
     //重新开始比赛，随机生成选手的实力情况
-    private static void resetGenerator() {
-        for (int i = 0; i < 60; ++i)
-            playerLevel[i] = RandIntegerGenerator.uniformRand(1, 11);
+    public static void resetGenerator(int amount) {
+        for (int i = 0; i < amount; ++i)
+            playersLevel.add(RandInteger.uniformRand(1, 11));
     }
 
     //产生各种比赛信息
-    public void generate(String competitionType, Member member, int round) throws IllegalArgumentException {
-        if (member.getId() > 60)//编号不可大于60
-            throw new IllegalArgumentException("编号大于60");
+    public void start(int number) {
         for (int i = 0; i < 21; ++i) {
             eachTime[i] = 0;
             conditions[i] = Condition.NULL;
         }
-        bowlingBall(member.getId());
-        calculateScore();
+        for (int i = 0; i < 3; ++i)
+            resultArray[i] = 0;
+        bowlingBall(number);
+        countRoundScore();
     }
 
-    //模拟投球，并记录情况
+    //模拟投球，并记录投球情况
     private static void bowlingBall(int number) {
         int first, second;
         for (int i = 0; i < 10; ++i) {
-            first = RandScore(number);//第一次投球
+            first = getRandomScore(number);//第一次投球
             if (first == 10) {//全中
                 eachTime[2 * i] = 10;
                 conditions[2 * i] = Condition.Strike;
@@ -50,19 +50,20 @@ public class PerRoundSimulator {
                 }
             } else //未全中或犯规
                 recordMissAndFoul(first, 2 * i);
-            second = RandScore(number);//第二次投球
+            second = getRandomScore(number);//第二次投球
             if (second == 10) {//补中
                 eachTime[2 * i + 1] = 10;
                 conditions[2 * i + 1] = Condition.Spare;
             } else //未补中或犯规
                 recordMissAndFoul(second, 2 * i + 1);
             if (conditions[18] == Condition.Strike || conditions[19] == Condition.Spare)//如果第十局全中或补中要开启第三局
-                recordMissAndFoul(RandScore(number), 20);
+                recordMissAndFoul(getRandomScore(number), 20);
         }
     }
 
-    private static int RandScore(int number) {
-        return RandIntegerGenerator.normalRand(-1, 10, playerLevel[number], 1);
+    //根据选手实力返回一个随机分数
+    private static int getRandomScore(int number) {
+        return RandInteger.normalRand(-1, 10, playersLevel.get(number - 1), 1);
     }
 
     //处理部分命中或犯规。amount为倒瓶数，time为投球次序数
@@ -76,16 +77,28 @@ public class PerRoundSimulator {
     }
 
     //计算每轮得分
-    private static void calculateScore() {
+    private static void countRoundScore() {
         for (int i = 0; i < 10; ++i) {
             switch (conditions[2 * i]) {//第一次投球
                 case Strike://全中
-                    calculateStrikeAndSpare(i, 2 * i, 2);
+                    eachTurn[i] = 10;
+                    for (int j = 0, k = 1; j < 2; ++k) {
+                        if (conditions[2 * i + k] != Condition.NULL) {
+                            eachTurn[i] += eachTime[2 * i + k];
+                            ++j;
+                        }
+                    }
                     break;
                 default: {//第二次投球
                     switch (conditions[2 * i + 1]) {
                         case Spare://补中
-                            calculateStrikeAndSpare(i, 2 * i + 1, 1);
+                            eachTurn[i] = 10;
+                            for (int j = 0, k = 1; j < 1; ++k) {
+                                if (conditions[2 * i + 1 + k] != Condition.NULL) {
+                                    eachTurn[i] += eachTime[2 * i + 1 + k];
+                                    ++j;
+                                }
+                            }
                             break;
                         default://部分命中或犯规
                             eachTurn[i] = eachTime[2 * i] + eachTime[2 * i + 1];
@@ -95,47 +108,37 @@ public class PerRoundSimulator {
         }
     }
 
-    //计算全中或补中后两次或一次有效投球的倒瓶数之和（即全中和补中的分数）
-    private static void calculateStrikeAndSpare(int round, int time, int count) {
-        eachTurn[round] = 10;
-        for (int i = 0, j = 1; i < count; ++j) {
-            if (conditions[time + j] != Condition.NULL) {
-                eachTurn[round] += eachTime[time + j];
-                ++i;
-            }
-        }
-    }
-
-    public void getDescriptionAndFoul(int description, int foul, int round) {
+    public int[] getResultArray(int round) {
         int turn;
-        CompetitionInfo competitionInfo = new CompetitionInfo();
         for (int i = 0; i < 21; ++i) {
             if (conditions[i] != Condition.NULL) {
                 if (conditions[i] == Condition.Foul)
-                    ++foul;
-                description = round * 100000;
+                    ++resultArray[1];
+                resultArray[0] = round * 100000;
                 turn = (i / 2 + 1);
-                if (turn != 10) //turn为10十位是0
-                        description += (turn * 10000);
-                if (i != 20)//比赛次数
-                    description += ((i % 2 + 1) * 1000);
+                if (turn != 10) //第几轮
+                    resultArray[0] += (turn * 10000);
+                if (i != 20)//第几次
+                    resultArray[0] += ((i % 2 + 1) * 1000);
                 else
-                    description += (3 * 1000);
-                description += (conditions[i].ordinal() * 100);
-                if (conditions[i] == Condition.Miss) //部分命中要说明命中数量
-                    description +=eachTime[i];
+                    resultArray[0] += (3 * 1000);
+                resultArray[0] += (conditions[i].ordinal() * 100);
+                if (conditions[i] == Condition.Miss) //命中数量
+                    resultArray[0] += eachTime[i];
             }
         }
-    }
-
-    public static int[] getEachTurn() {
-        return eachTurn;
-    }
-
-    public static int getTotalScore() {
-        int sum = 0;
         for (int e : eachTurn)
-            sum += e;
-        return sum;
+            resultArray[2] += e;
+        System.out.println(resultArray[2]);
+        return resultArray;
+    }
+
+    public int[] getResArray(int number, int round) {
+        int[] resArray = new int[12];
+        for (int i = 0; i < 10; ++i)
+            resArray[i] = eachTurn[i];
+        resArray[10] = round;
+        resArray[11] = number;
+        return resArray;
     }
 }

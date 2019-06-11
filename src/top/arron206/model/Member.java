@@ -219,14 +219,16 @@ public class Member {
             return 2;
         try{
             conn.setAutoCommit(false);
-            String insertSQL = "";
+            String insertSQL = "INSERT INTO CompetitionRes(first, second, third, forth, fifth, sixth, seventh, eighth, ninth, tenth, memberid, round, type)  VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?)";
             exec = conn.prepareStatement(insertSQL);
             int len = results.size();
             for(int i=0;i<len;i++){
                 for(int j=0;j<12;j++) {
+                    //System.out.println(results.get(i)[j]);
                     exec.setInt(j+1, results.get(i)[j]);
                 }
                 exec.setString(13,type);
+                //System.out.println(type);
                 exec.addBatch();
                 if((i!=0 && i%200==0)||i==len-1){
                     exec.executeBatch();
@@ -453,12 +455,10 @@ public class Member {
                 exec.setInt(1,scores.get(i));
                 exec.setInt(2,memberIds.get(i));
                 exec.addBatch();
-                if(i==len-1 ){
-                    exec.executeBatch();
-                    conn.commit();
-                    exec.clearBatch();
-                }
             }
+            exec.executeBatch();
+            conn.commit();
+            exec.clearBatch();
         }catch (SQLException e){
             return 4;
         }finally {
@@ -478,6 +478,37 @@ public class Member {
             return false;
         conn.commit();
         return true;
+    }
+
+    public static int insertAllCredit(LinkedList<Integer> memberIds, LinkedList<Integer> credits){
+        Connection conn = DBConnection.getConn();
+        PreparedStatement exec=null;
+        boolean release = false;
+        if(conn==null)
+            return 2;
+        try {
+            conn.setAutoCommit(false);
+            String sql = "UPDATE Member SET credit = ? WHERE id = ?";
+            exec = conn.prepareStatement(sql);
+            int len = memberIds.size();
+            for(int i=0;i<len;i++){
+                exec.setInt(1, credits.get(i));
+                exec.setInt(2,memberIds.get(i));
+                exec.addBatch();
+                if(i==len-1){
+                    exec.executeBatch();
+                    conn.commit();
+                    exec.clearBatch();
+                }
+            }
+        }catch (SQLException e){
+            return 4;
+        }finally {
+            release=DBConnection.release(conn, null, null);
+        }
+        if(!release)
+            return 5;
+        return 1;
     }
 
     public int insertCredit(){

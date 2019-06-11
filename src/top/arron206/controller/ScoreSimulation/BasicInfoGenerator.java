@@ -1,10 +1,25 @@
 package top.arron206.controller.ScoreSimulation;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class BasicInfoGenerator {
-    public String getRandomName() {
+    public static LinkedList<String> getNameList(int amount) {
+        LinkedList<String> nameList = new LinkedList<>();
+        for (int i = 0; i < amount; ++i)
+            nameList.add(getRandomName());
+        return nameList;
+    }
+
+    public static LinkedList<String> getProvinceList(int amount) {
+        LinkedList<String> provinceList = new LinkedList<>();
+        for (int i = 0; i < amount; ++i)
+            provinceList.add(getRandomProvince());
+        return provinceList;
+    }
+
+    public static String getRandomName() {
         List<String> familyName = Arrays.asList(
                 "赵", "钱", "孙", "李", "周", "吴", "郑", "王", "冯", "陈",
                 "刘", "卫", "蒋", "沈", "韩", "杨", "朱", "秦", "尤", "许",
@@ -27,10 +42,10 @@ public class BasicInfoGenerator {
                 "文虹", "向笛", "心远", "欣德", "新翰", "兴言", "星阑", "修为", "旭尧", "炫明",
                 "学真", "雪风", "雅昶", "阳曦", "烨熠", "英韶", "永贞", "咏德", "宇寰", "雨泽",
                 "玉韵", "越彬", "蕴和", "哲彦", "振海", "正志", "子晋", "自怡", "德赫", "君平");
-        return familyName.get(RandIntegerGenerator.uniformRand(0, familyName.size())) + firstName.get(RandIntegerGenerator.uniformRand(0, firstName.size()));
+        return familyName.get(RandInteger.uniformRand(0, familyName.size() - 1)) + firstName.get(RandInteger.uniformRand(0, firstName.size() - 1));
     }
 
-    public String getRandomProvince() {
+    public static String getRandomProvince() {
         List<String> province = Arrays.asList(
                 "北京市", "天津市", "上海市", "重庆市", "河北省", "山西省",
                 "辽宁省", "吉林省", "黑龙江省", "江苏省", "浙江省", "安徽省",
@@ -38,6 +53,6 @@ public class BasicInfoGenerator {
                 "广东省", "海南省", "四川省", "贵州省", "云南省", "陕西省",
                 "甘肃省", "青海省", "台湾省", "内蒙古自治区", "广西壮族自治区",
                 "西藏自治区", "宁夏回族自治区", "新疆维吾尔自治区", "香港特别行政区", "澳门特别行政区");
-        return province.get(RandIntegerGenerator.uniformRand(0, province.size()));
+        return province.get(RandInteger.uniformRand(0, province.size() - 1));
     }
 }

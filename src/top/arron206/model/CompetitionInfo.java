@@ -109,13 +109,12 @@ public class CompetitionInfo {
             int len = description.size();
             for(int i=0;i<60;i++){
                 for(int j=1;j<=6;j++){
-                    System.out.println(i+" "+j);
                     exec.setString(1,competitionType);
-                    exec.setInt(2,description.get(i*6+j));
-                    exec.setInt(3, foul.get(i*6+j));
+                    exec.setInt(2,description.get(i*6+j-1));
+                    exec.setInt(3, foul.get(i*6+j-1));
                     exec.setInt(4, i+1);
                     exec.addBatch();
-                    if(((i*6+j)!=0 && (i*6+j)%200==0) || i==len-1){
+                    if(((i*6+j-1)!=0 && (i*6+j-1)%200==0) || (i==59)&&j==6){
                         exec.executeBatch();
                         conn.commit();
                         exec.clearBatch();

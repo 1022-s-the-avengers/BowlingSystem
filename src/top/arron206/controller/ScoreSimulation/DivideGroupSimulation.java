@@ -1,39 +1,39 @@
 package top.arron206.controller.ScoreSimulation;
 
-import top.arron206.model.Group;
-
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class DivideGroupSimulation {
-    public static void divideGroup(String competitionType) {
-        int temp, j, groupMemberAmount = getMemberAmount(competitionType);
+    public static LinkedList<LinkedList<Integer>> getAllMemberList(LinkedList<Integer> allGroupList) {
+        int temp, j;
         boolean[] flag = new boolean[61];
-        ArrayList<Integer> memberNumbers = new ArrayList<>();//队员成员信息
-        Group group;
-        Group.addGroup(competitionType);
-        for (int i = 1; i <= (60 / groupMemberAmount); ++i) {
+        LinkedList<LinkedList<Integer>> allMemberList = new LinkedList<>();//队员成员信息
+        for (int i = 1; i <= allGroupList.size(); ++i) {
             j = 0;
+            LinkedList<Integer> memberList = new LinkedList<>();
             do {
-                temp = RandIntegerGenerator.uniformRand(1, 60);
+                temp = RandInteger.uniformRand(1, 60);
                 if (!flag[temp]) {
-                    memberNumbers.add(temp);
+                    memberList.add(temp);
+                    flag[temp] = true;
                     ++j;
                 }
-            }while (j < groupMemberAmount);
-            group = new Group(i, competitionType);
-            group.addGroupMember(memberNumbers);
-            memberNumbers.clear();
+            } while (j < (60/allGroupList.size()));
+            allMemberList.add(memberList);
         }
+        return allMemberList;
     }
-    private static int getMemberAmount(String competitionType) {
-        switch (competitionType) {
-            case "双人赛" :
-                return 2;
-            case "三人赛" :
-                return 3;
-            case "五人赛" :
-                return 5;
-        }
-        return 0;
+    public static LinkedList<Integer> getAllGroupList(int amount) {
+        LinkedList<Integer> allGroupList = new LinkedList<>();
+        for (int i = 1; i <= amount; ++i)
+            allGroupList.add(i);
+        return allGroupList;
+    }
+    public static void main(String...args) {
+        var groupList = getAllGroupList(30);
+        var memberList = getAllMemberList(groupList);
+        for (var e : memberList)
+            ;
+            //System.out.println(e);
+
     }
 }

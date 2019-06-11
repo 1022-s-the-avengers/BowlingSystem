@@ -1,6 +1,6 @@
 package top.arron206.controller.ScoreSimulation;
 
-public class RandIntegerGenerator {
+public class RandInteger {
     //加载动态链接库
     static {
         System.loadLibrary("JavaNative");
