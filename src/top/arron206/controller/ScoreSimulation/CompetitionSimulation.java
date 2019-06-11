@@ -46,11 +46,8 @@ public class CompetitionSimulation {
 
     public void classicCompetition() {
         int[] resultArray1, resultArray2;
-        LinkedList<Integer> descriptions1 = new LinkedList<>();
-        LinkedList<Integer> fouls1 = new LinkedList<>();
-        LinkedList<Integer> descriptions2 = new LinkedList<>();
-        LinkedList<Integer> fouls2 = new LinkedList<>();
-        LinkedList<int[]> perRoundScoreList = new LinkedList<>();
+        int[] descriptions = new int[240];
+        int[] fouls = new int[240];
         ArrayList<Member> classicList = new ArrayList<>();
         Member.getRank(classicList);
         int credits[] = new int[16];
@@ -60,26 +57,34 @@ public class CompetitionSimulation {
                     continue;
                 perRoundSimulator.start(classicList.get(num1).getId(), getPlayLevel(classicList.get(num1)), 1);
                 resultArray1 = perRoundSimulator.getResultArray();
-                fouls1.add(resultArray1[1]);
+                descriptions[num1 * 15 + num2 - 1] = resultArray1[0];
+                fouls[num1 * 15 + num2 - 1] = resultArray1[1];
                 perRoundSimulator.start(classicList.get(num2).getId(), getPlayLevel(classicList.get(num2)), 1);
                 resultArray2 = perRoundSimulator.getResultArray();
+                descriptions[num2 * 15 + num1] = resultArray2[0];
+                fouls[num2 * 15 + num1] = resultArray2[1];
                 if (resultArray1[2] > resultArray2[2])
                     credits[num1]++;
                 else
                     credits[num2]++;
             }
         }
-        //Member.addAllRes(perRoundScoreList, "精英赛");
-        //CompetitionInfo.insertList("精英赛", descriptions, fouls);
-        //获取精英赛成员的ID列表
+        int i = CompetitionInfo.insertAllClassic(getClassicIdList(classicList), arrayToLinkedList(descriptions), arrayToLinkedList(fouls));
+        Member.insertAllCredit(getClassicIdList(classicList), arrayToLinkedList(credits));
+    }
+
+    private LinkedList<Integer> arrayToLinkedList(int [] array) {
+        LinkedList<Integer> arrayList = new LinkedList<>();
+        for (int e : array)
+            arrayList.add(e);
+        return arrayList;
+    }
+
+    private LinkedList<Integer> getClassicIdList(ArrayList<Member> classicList) {
         LinkedList<Integer> classicNumberList = new LinkedList<>();
         for (Member e : classicList)
             classicNumberList.add(e.getId());
-        //获取积分列表
-        LinkedList<Integer> creditList = new LinkedList<>();
-        for (int e : credits)
-            creditList.add(e);
-        Member.insertAllCredit(classicNumberList, creditList);
+        return classicNumberList;
     }
 
     private void ordinaryCompetitionSimulation(CompetitionType competitionType) {
