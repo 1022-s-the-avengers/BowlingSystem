@@ -143,10 +143,12 @@ public class CompetitionInfo {
             exec = conn.prepareStatement(sql);
             int len = memberIds.size();
             for(int i=0;i<len;i++){
-                exec.setString(1,"精英赛");
-                exec.setInt(2,descriptions.get(i));
-                exec.setInt(3,fouls.get(i));
-                exec.setInt(4,memberIds.get(i));
+                for(int j = 0;j<15;j++){
+                    exec.setString(1,"精英赛");
+                    exec.setInt(2,descriptions.get(i*15+j));
+                    exec.setInt(3,fouls.get(i*15+j));
+                    exec.setInt(4,memberIds.get(i));
+                }
                 if(i==len-1){
                     exec.executeBatch();
                     conn.commit();
