@@ -272,6 +272,30 @@ public class Member {
         }
     }
 
+    public static int getRankList(List<Member> res){
+        Connection conn = DBConnection.getConn();
+        if(DBConnection.judge(conn))
+            return 2;
+        PreparedStatement exec=null;
+        ResultSet r=null;
+        boolean release = false;
+        try{
+            conn.setAutoCommit(false);
+            String sql = "SELECT * FROM Member GROUP BY totalScore";
+            exec = conn.prepareStatement(sql);
+            r = exec.executeQuery();
+            conn.commit();
+            generateMember(r, res);
+        }catch (SQLException e){
+            return 4;
+        }finally {
+            release=DBConnection.release(conn, exec, r);
+        }
+        if(!release)
+            return 5;
+        return 1;
+    }
+
     public static void generateMember(ResultSet r, List<Member> res) throws SQLException {
         while(r.next()){
             res.add(
