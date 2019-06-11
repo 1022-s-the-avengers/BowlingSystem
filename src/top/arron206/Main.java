@@ -19,11 +19,12 @@ public class Main extends Application{
         stage.show();
     }
     public static void main(String...args) {
-        CompetitionSimulation competitionSimulation = new CompetitionSimulation();
-        competitionSimulation.ordinaryCompetition(CompetitionType.Singles);
-        competitionSimulation.ordinaryCompetition(CompetitionType.Doubles);
-        competitionSimulation.ordinaryCompetition(CompetitionType.Triples);
-        competitionSimulation.ordinaryCompetition(CompetitionType.Penta);
-        competitionSimulation.classicCompetition();
+        Application.launch();
+//        CompetitionSimulation competitionSimulation = new CompetitionSimulation();
+//        competitionSimulation.ordinaryCompetition(CompetitionType.Singles);
+//        competitionSimulation.ordinaryCompetition(CompetitionType.Doubles);
+//        competitionSimulation.ordinaryCompetition(CompetitionType.Triples);
+//        competitionSimulation.ordinaryCompetition(CompetitionType.Penta);
+//        competitionSimulation.classicCompetition();
     }
 }

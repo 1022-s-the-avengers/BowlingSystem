@@ -45,25 +45,25 @@ public class RankControl {
                 }
                 break;
             case "双人赛排名" :
-                if(MatchControl.state<2){
+                if(MatchControl.state<5){
                     showNoMatch("双人赛还未进行");
                     return;
                 }
                 break;
             case "三人赛排名" :
-                if(MatchControl.state<2){
+                if(MatchControl.state<8){
                     showNoMatch("三人赛还未进行");
                     return;
                 }
                 break;
             case "五人赛排名" :
-                if(MatchControl.state<2){
+                if(MatchControl.state<11){
                     showNoMatch("五人赛还未进行");
                     return;
                 }
                 break;
             case "精英赛排名" :
-                if(MatchControl.state<2){
+                if(MatchControl.state<=13){
                     showNoMatch("精英赛还未进行");
                     return;
                 }

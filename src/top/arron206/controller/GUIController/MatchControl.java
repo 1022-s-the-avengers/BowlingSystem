@@ -1,6 +1,8 @@
 package top.arron206.controller.GUIController;
 
 import javafx.animation.KeyFrame;
+import javafx.animation.ParallelTransition;
+import javafx.animation.RotateTransition;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -10,9 +12,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import top.arron206.Main;
 
@@ -40,6 +44,10 @@ public class MatchControl {
     @FXML
     //比赛的主面板
     private AnchorPane MatchPane;
+
+    @FXML
+    //比赛中的面板
+    Pane conduct;
     @FXML
     //比赛进行中的信息
     Label conductInfo;
@@ -106,6 +114,7 @@ public class MatchControl {
 
         EventHandler<ActionEvent> eventHandler= e -> {
             loadfx("view/Match/MatchConduct.fxml");
+            setAnimation();
             conductInfo.setText(infoConst);
         };
 
@@ -114,7 +123,7 @@ public class MatchControl {
         };
 
         //javafx动画
-        Timeline animation=new Timeline(new KeyFrame(Duration.millis(0),eventHandler),new KeyFrame(Duration.millis(2000),eventHandler2));
+        Timeline animation=new Timeline(new KeyFrame(Duration.millis(0),eventHandler),new KeyFrame(Duration.millis(3000),eventHandler2));
         animation.setCycleCount(1);
         animation.play();
     }
@@ -149,6 +158,42 @@ public class MatchControl {
             in.add(new Label("123"),1,1);
             Group.getChildren().add(in);
         }
+    }
+
+    void setAnimation(){
+        //放置球
+        ImageView ball = new ImageView("src/top/arron206/resources/ball.png");
+        ball.setFitHeight(60);
+        ball.setFitWidth(60);
+        ball.setX(60);
+        ball.setY(280);
+        conduct.getChildren().add(ball);
+        //放置瓶子
+        ImageView [] bottle = new ImageView[10];
+        int [] y = {280,250,310,220,280,340,190,250,310,370};
+        int [] x = {700,720,720,740,740,740,780,780,780,780};
+        for(int i=0;i<10;i++){
+            bottle[i] = new ImageView("src/top/arron206/resources/bottle.png");
+            bottle[i].setFitWidth(12);
+            bottle[i].setFitHeight(50);
+            bottle[i].setX(x[i]);
+            bottle[i].setY(y[i]);
+            conduct.getChildren().add(bottle[i]);
+        }
+
+        //设置动画
+
+
+        RotateTransition rotateTransition =
+                new RotateTransition(Duration.millis(3000),ball);
+        rotateTransition.setByAngle(360f);
+        rotateTransition.setCycleCount(Timeline.INDEFINITE);
+        
+        ParallelTransition parallelTransition=new ParallelTransition(rotateTransition);
+        parallelTransition.setCycleCount(Timeline.INDEFINITE);
+        parallelTransition.play();
+
+
     }
 
 }
