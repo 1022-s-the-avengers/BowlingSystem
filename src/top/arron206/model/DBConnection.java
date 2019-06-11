@@ -2,10 +2,11 @@ package top.arron206.model;
 
 
 import java.sql.*;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class DBConnection {
-    protected static Connection getConn(){
+    static Connection getConn(){
         Connection conn;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -17,7 +18,7 @@ public class DBConnection {
         return conn;
     }
 
-    protected static boolean release(Connection conn, PreparedStatement exec, ResultSet r){
+    static boolean release(Connection conn, PreparedStatement exec, ResultSet r){
         if(exec!=null) {
             try {
                 exec.close();
@@ -42,14 +43,28 @@ public class DBConnection {
         return true;
     }
 
-    protected static boolean judge(Connection conn){
+    static void updateAll(Connection conn,PreparedStatement exec ,LinkedList<Integer> var1, LinkedList<Integer> var2) throws SQLException {
+        int len = var1.size();
+        for(int i=0;i<len;i++){
+            exec.setInt(1, var1.get(i));
+            exec.setInt(2,var2.get(i));
+            exec.addBatch();
+            if(i==len-1){
+                exec.executeBatch();
+                conn.commit();
+                exec.clearBatch();
+            }
+        }
+    }
+
+    static boolean judge(Connection conn){
         return conn == null;
     }
 
 
-    protected  static void inti(Connection a){
-        a=DBConnection.getConn();
-    }
+//    protected  static void inti(Connection a){
+//        a=DBConnection.getConn();
+//    }
 
     public static void main(String... args) {
     }
