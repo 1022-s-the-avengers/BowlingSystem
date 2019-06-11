@@ -21,4 +21,8 @@ public enum CompetitionType {
         }
         return 0;
     }
+
+    public String toString() {
+        return str;
+    }
 }

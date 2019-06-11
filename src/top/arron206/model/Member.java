@@ -552,7 +552,5 @@ public class Member {
     }
 
     public static void main(String... args){
-        int a = (int)3.1;
-        System.out.println(a);
     }
 }

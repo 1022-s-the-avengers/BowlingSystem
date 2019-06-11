@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import top.arron206.controller.ScoreSimulation.CompetitionSimulation;
+import top.arron206.controller.ScoreSimulation.CompetitionType;
 
 public class Main extends Application{
 
@@ -17,6 +19,11 @@ public class Main extends Application{
         stage.show();
     }
     public static void main(String...args) {
-        Application.launch(args);
+        CompetitionSimulation competitionSimulation = new CompetitionSimulation();
+        competitionSimulation.ordinaryCompetition(CompetitionType.Singles);
+        competitionSimulation.ordinaryCompetition(CompetitionType.Doubles);
+        competitionSimulation.ordinaryCompetition(CompetitionType.Triples);
+        competitionSimulation.ordinaryCompetition(CompetitionType.Penta);
+        competitionSimulation.classicCompetition();
     }
 }

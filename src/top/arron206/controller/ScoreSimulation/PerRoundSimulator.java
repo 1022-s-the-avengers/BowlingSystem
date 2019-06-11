@@ -121,7 +121,6 @@ public class PerRoundSimulator {
         }
         for (int e : eachTurn)
             resultArray[2] += e;
-        System.out.println(resultArray[2]);
         return resultArray;
     }
 

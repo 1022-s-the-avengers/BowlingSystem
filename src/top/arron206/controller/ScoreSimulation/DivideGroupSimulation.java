@@ -8,13 +8,13 @@ public class DivideGroupSimulation {
         if (groupAmount % groupAmount != 0)//必须除得尽
             return null;
         int temp, j;
-        boolean[] isSelected = new boolean[groupAmount * memberAmount];
+        boolean[] isSelected = new boolean[groupAmount * memberAmount + 1];
         LinkedList<LinkedList<Integer>> allMembersList = new LinkedList<>();//队员成员信息
         for (int i = 1; i <= groupAmount; ++i) {
             j = 0;
             LinkedList<Integer> memberList = new LinkedList<>();
             do {
-                temp = RandInteger.uniformRand(1, 60);
+                temp = RandInteger.uniformRand(1, groupAmount * memberAmount);
                 if (!isSelected[temp]) {
                     memberList.add(temp);
                     isSelected[temp] = true;

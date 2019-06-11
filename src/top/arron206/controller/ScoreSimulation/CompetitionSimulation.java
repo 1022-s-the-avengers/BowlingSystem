@@ -36,14 +36,15 @@ public class CompetitionSimulation {
     public void ordinaryCompetition(CompetitionType competitionType) {
         if (competitionType != CompetitionType.Singles) {
             LinkedList<Integer> allGroupsList;
+            LinkedList<LinkedList<Integer>> allMemberList;
             Group.addGroup(competitionType.toString());//创建组别
             allGroupsList = DivideGroupSimulation.getOrderIntegerList(playerAmount / competitionType.getAmount());
-            Group.addGroupList(DivideGroupSimulation.getAllMembersList(playerAmount / competitionType.getAmount(),
-                    competitionType.getAmount()), allGroupsList, CompetitionType.Singles.toString());
+            allMemberList = DivideGroupSimulation.getAllMembersList(playerAmount / competitionType.getAmount(), competitionType.getAmount());
+            int iii = Group.addGroupList(allMemberList, allGroupsList, competitionType.toString());
             memberList.clear();
             Member.getAllMembers(memberList);//更新成员信息
         }
-        ordinaryCompetition(competitionType);
+        ordinaryCompetitionSimulation(competitionType);
     }
 
     public void classicCompetition() {
@@ -79,7 +80,7 @@ public class CompetitionSimulation {
         LinkedList<int[]> perRoundScoreList = new LinkedList<>();
         for (Member e : memberList) {
             for (int i = 1; i <= 6; ++i) {
-                perRoundSimulator.start(e.getId(), playersLevel.get(e.getId()), i);//生成每局比赛信息
+                perRoundSimulator.start(e.getId(), getPlayLevel(e), i);//生成每局比赛信息
                 resultArray = perRoundSimulator.getResultArray();
                 descriptions.add(resultArray[0]);
                 fouls.add(resultArray[1]);
@@ -89,10 +90,11 @@ public class CompetitionSimulation {
                 perRoundScoreList.add(perRoundSimulator.getResArray());
             }
         }
-        int iii = Member.addAllRes(perRoundScoreList, competitionType.toString());
-        System.out.println(iii);
+        Member.addAllRes(perRoundScoreList, competitionType.toString());
         Member.updateAllScore(DivideGroupSimulation.getOrderIntegerList(playerAmount), totalScore);
-        CompetitionInfo.insertList(competitionType.toString(), descriptions, fouls);
+        System.out.println(descriptions);
+        int iii = CompetitionInfo.insertList(competitionType.toString(), descriptions, fouls);
+        System.out.println(iii);
         if (competitionType != CompetitionType.Singles)
             Group.updateTotalScoreList(allGroupScoreList, DivideGroupSimulation.getOrderIntegerList(playerAmount / competitionType.getAmount()));
     }
@@ -110,7 +112,7 @@ public class CompetitionSimulation {
     }
 
     private int getPlayLevel(Member member) {
-        return playersLevel.get(member.getId());
+        return playersLevel.get(member.getId() - 1);
     }
     private void initializeMemberInfo() {
         Member.insertAllMember(BasicInfoGenerator.getNameList(playerAmount), BasicInfoGenerator.getProvinceList(playerAmount));
