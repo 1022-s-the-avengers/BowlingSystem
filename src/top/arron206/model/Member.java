@@ -530,6 +530,33 @@ public class Member {
         return 1;
     }
 
+    public int updateMember(){
+        ResultSet r = null;
+        PreparedStatement exec=null;
+        Connection conn = DBConnection.getConn();
+        if(DBConnection.judge(conn))
+            return 2;
+        boolean release = false;
+        try{
+            conn.setAutoCommit(false);
+            String sql = "UPDATE Member SET name=?, province = ? WHERE id = ?";
+            exec = conn.prepareStatement(sql);
+            exec.setString(1, name);
+            exec.setString(2, province);
+            exec.setInt(3, id);
+            if(exec.executeUpdate()!=1)
+                return 5;
+            conn.commit();
+        }catch (SQLException e){
+            return 4;
+        }finally {
+            release=DBConnection.release(conn, null, null);
+        }
+        if(!release)
+            return 5;
+        return 1;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
