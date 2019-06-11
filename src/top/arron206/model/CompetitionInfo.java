@@ -131,6 +131,39 @@ public class CompetitionInfo {
         return 1;
     }
 
+    public static int insertAllClassic(LinkedList<Integer> memberIds, LinkedList<Integer> descriptions, LinkedList<Integer> fouls){
+        Connection conn = DBConnection.getConn();
+        PreparedStatement exec=null;
+        boolean release;
+        if(conn==null)
+            return 2;
+        try{
+            conn.setAutoCommit(false);
+            String sql = "INSERT INTO CompetitionInformation (competitionType, description, foul, memberId) VALUE (?,?,?,?)";
+            exec = conn.prepareStatement(sql);
+            int len = memberIds.size();
+            for(int i=0;i<len;i++){
+                for(int j = 0;j<15;j++){
+                    exec.setString(1,"精英赛");
+                    exec.setInt(2,descriptions.get(i*15+j));
+                    exec.setInt(3,fouls.get(i*15+j));
+                    exec.setInt(4,memberIds.get(i));
+                    exec.addBatch();
+                }
+            }
+            exec.executeBatch();
+            conn.commit();
+            exec.clearBatch();
+        }catch (SQLException e){
+            return 4;
+        }finally {
+            release=DBConnection.release(conn, exec, null);
+        }
+        if(!release)
+            return 5;
+        return 1;
+    }
+
     @Override
     public String toString() {
         return  "id=" + id +

@@ -9,7 +9,6 @@ import top.arron206.controller.ScoreSimulation.CompetitionSimulation;
 import top.arron206.controller.ScoreSimulation.CompetitionType;
 
 public class Main extends Application{
-
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("view/Main.fxml"));

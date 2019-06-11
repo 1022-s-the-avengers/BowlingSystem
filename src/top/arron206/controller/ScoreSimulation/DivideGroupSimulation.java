@@ -5,8 +5,6 @@ import java.util.LinkedList;
 public class DivideGroupSimulation {
     //分组数量groupAmount和每组成员数量memberAmount
     public static LinkedList<LinkedList<Integer>> getAllMembersList(int groupAmount, int memberAmount) {
-        if (groupAmount % groupAmount != 0)//必须除得尽
-            return null;
         int temp, j;
         boolean[] isSelected = new boolean[groupAmount * memberAmount + 1];
         LinkedList<LinkedList<Integer>> allMembersList = new LinkedList<>();//队员成员信息
