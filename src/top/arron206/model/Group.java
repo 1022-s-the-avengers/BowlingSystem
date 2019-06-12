@@ -10,13 +10,32 @@ import java.util.LinkedList;
 public class Group {
     private int groupId;
     private String type;
+    private int totalScore;
 
     public Group(int groupId, String type) {
         this.groupId = groupId;
         this.type = type;
     }
 
-    public static int getRankList(ArrayList<Group> rank,String type){
+    public Group(int groupId, String type, int totalScore) {
+        this.groupId = groupId;
+        this.type = type;
+        this.totalScore = totalScore;
+    }
+
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public int getTotalScore() {
+        return totalScore;
+    }
+
+    public static int getRankList(ArrayList<Group> rank, String type){
         Connection conn = DBConnection.getConn();
         ResultSet r=null;
         boolean release = false;
@@ -24,18 +43,19 @@ public class Group {
         if(DBConnection.judge(conn))
             return 2;
         try{
-            conn.setAutoCommit(false);
             String querySQL = "SELECT * FROM TeamInfo WHERE type=? ORDER BY totalScore";
             exec = conn.prepareStatement(querySQL);
             exec.setString(1,type);
             r = exec.executeQuery();
             while(r.next()){
                 rank.add(new Group(
-                        r.getInt(1),
-                        r.getString(2)
+                        r.getInt(2),
+                        r.getString(3),
+                        r.getInt(4)
                         )
                 );
             }
+            System.out.println(rank);
         }catch (SQLException e){
             return 4;
         }finally {
@@ -56,10 +76,14 @@ public class Group {
             return 2;
         try{
             conn.setAutoCommit(false);
-            String querySQL = "SELECT * FROM Member WHERE id IN (SELECT memberId FROM GroupRelationship WHERE teamId = ? AND type=?)";
+            String querySQL = "";
+            switch (type){
+                case "双人赛": querySQL = "SELECT * FROM Member WHERE teamIdDouble = ? ";break;
+                case "三人赛": querySQL = "SELECT * FROM Member WHERE teamIdTriple = ? ";break;
+                case "五人赛": querySQL = "SELECT * FROM Member WHERE teamIdPenta = ? ";break;
+            }
             exec = conn.prepareStatement(querySQL);
             exec.setInt(1, groupId);
-            exec.setString(2,type);
             r = exec.executeQuery();
             Member.generateMember(r, res);
         }catch (SQLException e){

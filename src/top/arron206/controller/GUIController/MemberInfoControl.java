@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import top.arron206.Main;
 import top.arron206.controller.ScoreSimulation.CompetitionSimulation;
+import top.arron206.controller.ScoreSimulation.CompetitionType;
 import top.arron206.model.Member;
 
 
@@ -30,7 +31,7 @@ public class MemberInfoControl {
 
     //存储成员信息
 
-    List<Member> info = new ArrayList<>();
+    public static List<Member> info = new ArrayList<>();
 
 
     @FXML
@@ -62,8 +63,7 @@ public class MemberInfoControl {
     }
 
     void setMemberInfo(){
-        CompetitionSimulation competitionSimulation = new CompetitionSimulation();
-        info = competitionSimulation.getMemberList();
+        info = ComSimulation.competitionSimulation.getMemberList();
         System.out.println(info);
     }
 
@@ -81,7 +81,7 @@ public class MemberInfoControl {
             insert.add(new Label(man.getName()),3,0);
             insert.add(new Label("省份: "),0,1);
             insert.add(new Label(man.getProvince()),1,1);
-            final int id = man.getId();
+            final int id = man.getId()-1;
             insert.setOnMouseClicked(
                     e->{
                         if(isConfirm==0)
@@ -124,7 +124,7 @@ public class MemberInfoControl {
         btConfirm.setOnAction(e->{
             man.setName(nameField.getText());
             man.setProvince(provinceField.getText());
-
+            man.updateMember();
             stage.close();
             setInfo();
         });
@@ -134,6 +134,7 @@ public class MemberInfoControl {
     void toConfirm(ActionEvent event){
         isConfirm = 1;
         confirm.setText("信息已确认");
+
     }
 
 }

@@ -10,17 +10,25 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import top.arron206.Main;
+import top.arron206.controller.ScoreSimulation.CompetitionType;
+import top.arron206.model.CompetitionInfo;
+import top.arron206.model.Group;
+import top.arron206.model.Member;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MatchControl {
     /*存储比赛进行状态，
@@ -48,12 +56,19 @@ public class MatchControl {
     @FXML
     //比赛中的面板
     Pane conduct;
+
     @FXML
     //比赛进行中的信息
     Label conductInfo;
 
     @FXML
     FlowPane Group;
+
+    @FXML
+
+    FlowPane Begin;
+
+
 
 
     @FXML
@@ -73,18 +88,23 @@ public class MatchControl {
 
         switch (state) {
             case 1:
+                newThead(1);toConduct();break;
             case 4:
+                newThead(2);toConduct();break;
             case 7:
+                newThead(3);toConduct();break;
             case 10:
-            case 12: toConduct();break;
+                newThead(4);toConduct();break;
+            case 12:
+                newThead(5);toConduct();break;
             case 2:
             case 5:
-            case 8: loadfx("view/Match/MatchGroup.fxml"); insertGroup(); break; //toGroup
+            case 8: loadfx("view/Match/MatchGroup.fxml");insert(); break;
             case 3:
             case 6:
-            case 9:
-            case 11:loadfx("view/Match/MatchBegin.fxml");break; // toBegin();
-            default:loadfx("view/Match/MatchEnd.fxml");
+            case 9:loadfx("view/Match/MatchBegin.fxml");insertGroup();break;
+            case 11:loadfx("view/Match/MatchBegin.fxml");insert();break; // toBegin();
+            default:loadfx("view/Match/MatchEnd.fxml");insert();
         }
 
     }
@@ -114,8 +134,8 @@ public class MatchControl {
 
         EventHandler<ActionEvent> eventHandler= e -> {
             loadfx("view/Match/MatchConduct.fxml");
-            setAnimation();
             conductInfo.setText(infoConst);
+            setAnimation();
         };
 
         EventHandler<ActionEvent> eventHandler2= e -> {
@@ -123,7 +143,7 @@ public class MatchControl {
         };
 
         //javafx动画
-        Timeline animation=new Timeline(new KeyFrame(Duration.millis(0),eventHandler),new KeyFrame(Duration.millis(3000),eventHandler2));
+        Timeline animation=new Timeline(new KeyFrame(Duration.millis(0),eventHandler),new KeyFrame(Duration.millis(30000),eventHandler2));
         animation.setCycleCount(1);
         animation.play();
     }
@@ -143,20 +163,40 @@ public class MatchControl {
         }
     }
 
-    void insertGroup(){
+    void insert(){
+        String match = new String();
+
+        switch(state){
+            case 2 : match = "单人赛";break;
+            case 5 : match = "双人赛";break;
+            case 8 : match = "三人赛";break;
+            case 11: match = "五人赛";break;
+            case 12: match = "精英赛";
+        }
+
+
         for (int i = 0 ;i<60;i++){
             GridPane in = new GridPane();
             in.setStyle("-fx-pref-width: 420;-fx-pref-height: 60; -fx-background-color: rgba(0,0,0,0.1);-fx-font-size: 16");
             in.setVgap(5);
             in.setHgap(5);
             in.setAlignment(Pos.CENTER);
-            in.add(new Label("id: "),0,0);
-            in.add(new Label("123"),1,0);
-            in.add(new Label("姓名: "),2,0);
-            in.add(new Label("abc"),3,0);
-            in.add(new Label("成绩: "),0,1);
-            in.add(new Label("123"),1,1);
-            Group.getChildren().add(in);
+            in.add(new Label (match),1,0);
+            in.add(new Label("id: "),0,1);
+            in.add(new Label(i+1+""),1,1);
+            in.add(new Label("姓名: "),2,1);
+            in.add(new Label(MemberInfoControl.info.get(i).getName()),3,1);
+            final int num = i;
+            final String matchInfo = match;
+            in.setOnMouseClicked(
+                    e->{
+                        showDetail(num,matchInfo);
+                    }
+            );
+            if(state==11)
+                Begin.getChildren().add(in);
+            else
+                Group.getChildren().add(in);
         }
     }
 
@@ -185,18 +225,160 @@ public class MatchControl {
 
         //球旋转
         RotateTransition rotateTransition =
-                new RotateTransition(Duration.millis(3000),ball);
+                new RotateTransition(Duration.millis(1000),ball);
         rotateTransition.setByAngle(360f);
         rotateTransition.setCycleCount(Timeline.INDEFINITE);
 
-        //球撞击
-        
-
+        System.out.println("球转动");
         ParallelTransition parallelTransition=new ParallelTransition(rotateTransition);
         parallelTransition.setCycleCount(Timeline.INDEFINITE);
         parallelTransition.play();
-
-
     }
+
+    void showDetail(int i,String match){
+
+        List <CompetitionInfo> info = new LinkedList<>();
+        MemberInfoControl.info.get(i).getCompetitionInfo(info);
+        System.out.println(info);
+
+
+
+        Button bt = new Button("确认");
+
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(20);
+        grid.setVgap(20);
+        //信息显示
+        Label id = new Label(MemberInfoControl.info.get(i).getId()+"");
+        Label name = new Label(MemberInfoControl.info.get(i).getName());
+
+        grid.add(new Label("id"),0,0);
+        grid.add(id,1,0);
+        grid.add(new Label("姓名："),0,1);
+        grid.add(name,1,1);
+
+        int j=0;
+        for(CompetitionInfo item : info){
+            if(item.getCompetitionType().equals(match)){
+                Label text = new Label(item.getDescription()+"");
+                grid.add(new Label("比赛详情"),0,j+2);
+                grid.add(text,1,j+2);
+                j++;
+            }
+        }
+
+        Stage stage = new Stage();
+        Scene scene = new Scene(grid,400,550);
+        stage.setTitle("比赛详情");
+        stage.setScene(scene);
+        stage.show();
+
+        bt.setOnAction(e->{
+            stage.close();
+        });
+    }
+
+    void newThead(int i){
+        Thread sing = new ComSimulation();
+        ComSimulation.type = i;
+        sing.start();
+    }
+
+    void showGroup(int num){
+
+        ArrayList <Member> memb = new ArrayList<>();
+       String type = new String();
+
+       switch(state){
+           case 3 : type="双人赛" ; break;
+           case 6 : type="三人赛" ; break;
+           case 9 : type="五人赛" ; break;
+       }
+
+       Group a= new Group(num+1,type);
+        int iii = a.getMembers(memb);
+
+        System.out.println(iii);
+
+        System.out.println(num+type);
+
+        System.out.println(memb);
+
+        Button bt = new Button("确认");
+
+        VBox grad = new VBox();
+        grad.setStyle("-fx-pref-width: 420;-fx-pref-height: 60; -fx-background-color: rgba(0,0,0,0.1);-fx-font-size: 16");
+        grad.setAlignment(Pos.CENTER);
+
+//        //信息显示
+//        Label id = new Label(MemberInfoControl.info.get(i).getId()+"");
+//        Label name = new Label(MemberInfoControl.info.get(i).getName());
+//
+//        grid.add(new Label("id"),0,0);
+//        grid.add(id,1,0);
+//        grid.add(new Label("姓名："),0,1);
+//        grid.add(name,1,1);
+
+//        for(int j=0;j<6;j++){
+//            Label text = new Label(info.get(j).getDescription()+"");
+//            grid.add(new Label("单人赛"),0,j+2);
+//            grid.add(text,1,j+2);
+//        }
+
+        for(Member item : memb){
+            GridPane in = new GridPane();
+            in.setStyle("-fx-pref-width: 500;-fx-pref-height: 60; -fx-background-color: rgba(0,0,0,0.1);-fx-font-size: 16");
+            in.setVgap(5);
+            in.setHgap(5);
+            in.setAlignment(Pos.CENTER);
+            Label id = new Label(item.getId()+"");
+            Label name = new Label(item.getName()+"");
+            in.add(new Label("ID:"),0,0);
+            in.add(id,1,0);
+            in.add(new Label("姓名："),0,1);
+            in.add(name,1,1);
+            grad.getChildren().add(in);
+        }
+
+        grad.getChildren().add(bt);
+        Stage stage = new Stage();
+        Scene scene = new Scene(grad,500,560);
+        stage.setTitle("分组详情");
+        stage.setScene(scene);
+        stage.show();
+
+        bt.setOnAction(e->{
+            stage.close();
+        });
+    }
+
+    void insertGroup (){
+        int group = 0;
+        switch(state){
+            case 3 : group=30;break;
+            case 6 : group=20;break;
+            case 9 : group=12;break;
+        }
+
+        for (int i = 0 ;i<group;i++){
+            List <CompetitionInfo> info = new LinkedList<>();
+            GridPane in = new GridPane();
+            in.setStyle("-fx-pref-width: 420;-fx-pref-height: 60; -fx-background-color: rgba(0,0,0,0.1);-fx-font-size: 16");
+            in.setVgap(5);
+            in.setHgap(5);
+            in.setAlignment(Pos.CENTER);
+            in.add(new Label("第"+(i+1)+"组"),0,0);
+            final int num = i;
+            in.setOnMouseClicked(
+                    e->{
+                        showGroup(num);
+                    }
+            );
+            Begin.getChildren().add(in);
+        }
+    }
+
+
 
 }

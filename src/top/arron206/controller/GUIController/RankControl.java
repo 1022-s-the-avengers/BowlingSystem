@@ -15,9 +15,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import top.arron206.Main;
+import top.arron206.model.Group;
 import top.arron206.model.Member;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RankControl {
@@ -79,8 +81,21 @@ public class RankControl {
             load.setController(this);
             load.setLocation(location);
             Parent conduct = load.load();
-            //插入排名
-            insertRank(text);
+            //选择插入排名
+            switch(text){
+                case "单人赛排名" :
+                    insertRank(text);
+                    break;
+                case "双人赛排名" :
+                case "三人赛排名" :
+                case "五人赛排名" :
+                    insertRankG(text);
+                    break;
+                case "精英赛排名" :
+
+                    break;
+            }
+
             mainPane.getChildren().add(conduct);
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,18 +111,40 @@ public class RankControl {
         title.setFont(Font.font("Timer New Roman", FontWeight.BOLD, FontPosture.ITALIC, 37));
         rankShow.getChildren().add(title);
 
-        for (int i=0;i<60;i++){
+        for (Member item : ComSimulation.singleR){
             GridPane insert = new GridPane();
             insert.setStyle("-fx-pref-width: 420;-fx-pref-height: 60; -fx-background-color: rgba(255,255,255,0.6);-fx-font-size: 16");
             insert.setVgap(5);
             insert.setHgap(5);
             insert.setAlignment(Pos.CENTER);
             insert.add(new Label("id: "),0,0);
-            insert.add(new Label(i+""),1,0);
+            insert.add(new Label(item.getId()+""),1,0);
             insert.add(new Label("姓名: "),3,0);
-            insert.add(new Label("sbjava"),4,0);
+            insert.add(new Label(item.getName()),4,0);
             insert.add(new Label("分数: "),0,1);
-            insert.add(new Label(108+""),1,1);
+            insert.add(new Label(item.getTotalScore()+""),1,1);
+            rankShow.getChildren().add(insert);
+        }
+    }
+
+    void insertRankG(String text){
+        ArrayList <Group> rank = new ArrayList<>();
+        System.out.println(text);
+        switch(text){
+            case "双人赛排名" : rank = ComSimulation.doubleR;break;
+            case "三人赛排名" : rank = ComSimulation.tripleR;break;
+            case "五人赛排名" : rank = ComSimulation.pentaR;break;
+        }
+        for (Group item : rank){
+            GridPane insert = new GridPane();
+            insert.setStyle("-fx-pref-width: 420;-fx-pref-height: 60; -fx-background-color: rgba(255,255,255,0.6);-fx-font-size: 16");
+            insert.setVgap(5);
+            insert.setHgap(5);
+            insert.setAlignment(Pos.CENTER);
+            insert.add(new Label("组ID: "),0,0);
+            insert.add(new Label(item.getGroupId()+""),1,0);
+            insert.add(new Label("组总分: "),0,1);
+            insert.add(new Label(item.getTotalScore()+""),1,1);
             rankShow.getChildren().add(insert);
         }
     }

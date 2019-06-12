@@ -123,6 +123,14 @@ public class Member {
         return teamIdPenta;
     }
 
+    public int getTotalScore() {
+        return totalScore;
+    }
+
+    public int getCredit() {
+        return credit;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -515,7 +523,7 @@ public class Member {
             return 2;
         try{
             conn.setAutoCommit(false);
-            String querySQL = "SELECT * FROM Member GROUP BY totalScore LIMIT 16";
+            String querySQL = "SELECT * FROM Member GROUP BY totalScore DESC ";
             exec = conn.prepareStatement(querySQL);
             r = exec.executeQuery();
             conn.commit();

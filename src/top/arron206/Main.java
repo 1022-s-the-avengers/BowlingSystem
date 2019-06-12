@@ -9,6 +9,9 @@ import top.arron206.controller.ScoreSimulation.CompetitionSimulation;
 import top.arron206.controller.ScoreSimulation.CompetitionType;
 
 public class Main extends Application{
+
+
+
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("view/Main.fxml"));
@@ -16,13 +19,14 @@ public class Main extends Application{
         stage.setTitle("保龄球计分系统");
         stage.setScene(scene);
         stage.show();
+
     }
     public static void main(String...args) {
         Application.launch();
-//        competitionSimulation.ordinaryCompetition(CompetitionType.Singles);
-//        competitionSimulation.ordinaryCompetition(CompetitionType.Doubles);
-//        competitionSimulation.ordinaryCompetition(CompetitionType.Triples);
-//        competitionSimulation.ordinaryCompetition(CompetitionType.Penta);
-//        competitionSimulation.classicCompetition();
+//        MainControl.competitionSimulation.ordinaryCompetition(CompetitionType.Singles);
+//        MainControl.competitionSimulation.ordinaryCompetition(CompetitionType.Doubles);
+//        MainControl.competitionSimulation.ordinaryCompetition(CompetitionType.Triples);
+//        MainControl.competitionSimulation.ordinaryCompetition(CompetitionType.Penta);
+//        MainControl.competitionSimulation.classicCompetition();
     }
 }

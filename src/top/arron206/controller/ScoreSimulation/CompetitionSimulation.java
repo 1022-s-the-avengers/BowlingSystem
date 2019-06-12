@@ -1,5 +1,6 @@
 package top.arron206.controller.ScoreSimulation;
 
+import top.arron206.controller.GUIController.MainControl;
 import top.arron206.model.CompetitionInfo;
 import top.arron206.model.Group;
 import top.arron206.model.Member;
@@ -7,7 +8,6 @@ import top.arron206.model.Member;
 import java.util.*;
 
 public class CompetitionSimulation {
-    public int status = 0;
     private int playerAmount = 60;
     private ArrayList<Member> memberList = new ArrayList<>();
     private PerRoundSimulator perRoundSimulator = new PerRoundSimulator();
@@ -31,7 +31,7 @@ public class CompetitionSimulation {
             playersLevel.add(RandInteger.uniformRand(1, 11));
     }
 
-    public void ordinaryCompetition(CompetitionType competitionType) {
+    public void divideGroup(CompetitionType competitionType) {
         if (competitionType != CompetitionType.Singles) {
             LinkedList<Integer> allGroupsList;
             LinkedList<LinkedList<Integer>> allMemberList;
@@ -42,8 +42,6 @@ public class CompetitionSimulation {
             memberList.clear();
             Member.getAllMembers(memberList);//更新成员信息
         }
-        ordinaryCompetitionSimulation(competitionType);
-        this.status = competitionType.getAmount();
     }
 
     public void classicCompetition() {
@@ -73,7 +71,6 @@ public class CompetitionSimulation {
         }
         CompetitionInfo.insertAllClassic(getClassicIdList(classicList), arrayToLinkedList(descriptions), arrayToLinkedList(fouls));
         Member.insertAllCredit(getClassicIdList(classicList), arrayToLinkedList(credits));
-        this.status = CompetitionType.Classic.getAmount();
     }
 
     private LinkedList<Integer> arrayToLinkedList(int [] array) {
@@ -90,7 +87,7 @@ public class CompetitionSimulation {
         return classicNumberList;
     }
 
-    private void ordinaryCompetitionSimulation(CompetitionType competitionType) {
+    public void ordinaryCompetition(CompetitionType competitionType) {
         int[] resultArray;
         LinkedList<Integer> descriptions = new LinkedList<>();
         LinkedList<Integer> fouls = new LinkedList<>();
@@ -109,7 +106,7 @@ public class CompetitionSimulation {
             }
         }
         Member.addAllRes(perRoundScoreList, competitionType.toString());
-        if (competitionType == CompetitionType.Penta)//最后一场普通赛写入总分
+        if (competitionType == CompetitionType.Penta || competitionType == CompetitionType.Singles)//最后一场普通赛写入总分
             Member.updateAllScore(DivideGroupSimulation.getOrderIntegerList(playerAmount), totalScore);
         CompetitionInfo.insertList(competitionType.toString(), descriptions, fouls);
         if (competitionType != CompetitionType.Singles)
@@ -145,4 +142,6 @@ public class CompetitionSimulation {
     public void setPlayerAmount(int playerAmount) {
         this.playerAmount = playerAmount;
     }
+
+
 }
