@@ -15,7 +15,7 @@ public class ComSimulation extends Thread {
     public static ArrayList <Group> doubleR= new ArrayList<>();
     public static ArrayList <Group> tripleR= new ArrayList<>();
     public static ArrayList<Group> pentaR= new ArrayList<>();
-    public static ArrayList<Group> jyR= new ArrayList<>();
+    public static ArrayList<Member> jyR= new ArrayList<>();
     @Override
     public void run(){
         System.out.println("123");
@@ -23,7 +23,7 @@ public class ComSimulation extends Thread {
             case 1 :
                     competitionSimulation.ordinaryCompetition(CompetitionType.Singles);
                     competitionSimulation.divideGroup(CompetitionType.Doubles);
-                    Member.getRank(singleR);
+                    Member.getRankList(singleR);
                     System.out.println(singleR);
                     break;
             case 2 :
@@ -33,12 +33,14 @@ public class ComSimulation extends Thread {
                 break;
             case 3 :competitionSimulation.ordinaryCompetition(CompetitionType.Triples);
                     competitionSimulation.divideGroup(CompetitionType.Penta);
-                    Group.getRankList(doubleR ,"三人赛");
+                    Group.getRankList(tripleR ,"三人赛");
                     break;
             case 4 :competitionSimulation.ordinaryCompetition(CompetitionType.Penta);
-                    Group.getRankList(doubleR ,"五人赛");
+                    Group.getRankList(pentaR ,"五人赛");
                     break;
-            case 5 :competitionSimulation.classicCompetition();break;
+            case 5 :competitionSimulation.classicCompetition();
+                    Member.getCreditList(jyR);
+                    break;
         }
 
         System.out.println("234");

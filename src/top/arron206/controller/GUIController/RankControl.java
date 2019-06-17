@@ -65,7 +65,7 @@ public class RankControl {
                 }
                 break;
             case "精英赛排名" :
-                if(MatchControl.state<=13){
+                if(MatchControl.state<13){
                     showNoMatch("精英赛还未进行");
                     return;
                 }
@@ -92,7 +92,7 @@ public class RankControl {
                     insertRankG(text);
                     break;
                 case "精英赛排名" :
-
+                    insertRank(text);
                     break;
             }
 
@@ -104,6 +104,14 @@ public class RankControl {
     }
 
     void insertRank(String text){
+
+        ArrayList <Member> info = new ArrayList<>() ;
+
+        switch (text){
+            case "单人赛排名":info = (ArrayList<Member>) ComSimulation.singleR; break;
+            case "精英赛排名":info = ComSimulation.jyR;break;
+        }
+
         Label title = new Label(text);
         title.setPrefWidth(900);
         title.setPrefHeight(80);
@@ -111,7 +119,7 @@ public class RankControl {
         title.setFont(Font.font("Timer New Roman", FontWeight.BOLD, FontPosture.ITALIC, 37));
         rankShow.getChildren().add(title);
 
-        for (Member item : ComSimulation.singleR){
+        for (Member item : info){
             GridPane insert = new GridPane();
             insert.setStyle("-fx-pref-width: 420;-fx-pref-height: 60; -fx-background-color: rgba(255,255,255,0.6);-fx-font-size: 16");
             insert.setVgap(5);

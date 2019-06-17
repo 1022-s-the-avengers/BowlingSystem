@@ -109,8 +109,10 @@ public class CompetitionSimulation {
         if (competitionType == CompetitionType.Penta || competitionType == CompetitionType.Singles)//最后一场普通赛写入总分
             Member.updateAllScore(DivideGroupSimulation.getOrderIntegerList(playerAmount), totalScore);
         CompetitionInfo.insertList(competitionType.toString(), descriptions, fouls);
+        int i = 0;
         if (competitionType != CompetitionType.Singles)
-            Group.updateTotalScoreList(allGroupScoreList, DivideGroupSimulation.getOrderIntegerList(playerAmount / competitionType.getAmount()));
+           i =  Group.updateTotalScoreList(allGroupScoreList, DivideGroupSimulation.getOrderIntegerList(playerAmount / competitionType.getAmount()),competitionType.toString());
+        System.out.println("");
     }
 
     private int getGroupId(CompetitionType competitionType, Member member) {

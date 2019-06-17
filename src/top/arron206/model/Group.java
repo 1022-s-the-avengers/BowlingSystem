@@ -43,7 +43,7 @@ public class Group {
         if(DBConnection.judge(conn))
             return 2;
         try{
-            String querySQL = "SELECT * FROM TeamInfo WHERE type=? ORDER BY totalScore";
+            String querySQL = "SELECT * FROM TeamInfo WHERE type=? ORDER BY totalScore DESC ";
             exec = conn.prepareStatement(querySQL);
             exec.setString(1,type);
             r = exec.executeQuery();
@@ -243,7 +243,7 @@ public class Group {
         return 1;
     }
 
-    public static int updateTotalScoreList(LinkedList<Integer> scores, LinkedList<Integer> teamIds){
+    public static int updateTotalScoreList(LinkedList<Integer> scores, LinkedList<Integer> teamIds, String type){
         boolean release = false;
         Connection conn = DBConnection.getConn();
         if(DBConnection.judge(conn))
@@ -252,20 +252,21 @@ public class Group {
         PreparedStatement exec=null;
         try{
             conn.setAutoCommit(false);
-            String updateSQL = "UPDATE TeamInfo SET totalScore = ? WHERE id = ?";
+            String updateSQL = "UPDATE TeamInfo SET totalScore = ? WHERE teamId = ? AND type = ?";
             exec = conn.prepareStatement(updateSQL);
-            DBConnection.updateAll(conn, exec, scores, teamIds);
-//            int len = scores.size();
-//            for(int i=0;i<len;i++){
-//                exec.setInt(1, scores.get(i));
-//                exec.setInt(2, teamIds.get(i));
-//                exec.addBatch();
-//                if(i==len-1){
-//                    exec.executeBatch();
-//                    conn.commit();
-//                    exec.clearBatch();
-//                }
-//            }
+//            DBConnection.updateAll(conn, exec, scores, teamIds);
+            int len = scores.size();
+            for(int i=0;i<len;i++){
+                exec.setInt(1, scores.get(i));
+                exec.setInt(2, teamIds.get(i));
+                exec.setString(3,type);
+                exec.addBatch();
+                if(i==len-1){
+                    exec.executeBatch();
+                    conn.commit();
+                    exec.clearBatch();
+                }
+            }
         }catch (SQLException e){
             return 4;
         }finally {

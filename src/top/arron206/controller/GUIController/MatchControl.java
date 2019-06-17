@@ -203,23 +203,11 @@ public class MatchControl {
     void setAnimation(){
         //放置球
         ImageView ball = new ImageView("src/top/arron206/resources/ball.png");
-        ball.setFitHeight(60);
-        ball.setFitWidth(60);
-        ball.setX(60);
-        ball.setY(280);
+        ball.setFitHeight(150);
+        ball.setFitWidth(150);
+        ball.setX(450);
+        ball.setY(220);
         conduct.getChildren().add(ball);
-        //放置瓶子
-        ImageView [] bottle = new ImageView[10];
-        int [] y = {280,250,310,220,280,340,190,250,310,370};
-        int [] x = {700,720,720,740,740,740,780,780,780,780};
-        for(int i=0;i<10;i++){
-            bottle[i] = new ImageView("src/top/arron206/resources/bottle.png");
-            bottle[i].setFitWidth(12);
-            bottle[i].setFitHeight(50);
-            bottle[i].setX(x[i]);
-            bottle[i].setY(y[i]);
-            conduct.getChildren().add(bottle[i]);
-        }
 
         //设置动画
 
@@ -259,9 +247,19 @@ public class MatchControl {
         grid.add(name,1,1);
 
         int j=0;
+
+        CompetitionType c = CompetitionType.Singles;
+        switch(match){
+            case "单人赛": c = CompetitionType.Singles;break;
+            case "双人赛": c = CompetitionType.Doubles;break;
+            case "三人赛": c = CompetitionType.Triples;break;
+            case "五人赛": c = CompetitionType.Penta;break;
+        }
+
         for(CompetitionInfo item : info){
             if(item.getCompetitionType().equals(match)){
-                Label text = new Label(item.getDescription()+"");
+                String minfo = getResultString(c,MemberInfoControl.info.get(i).getId(),item.getDescription());
+                Label text = new Label(minfo);
                 grid.add(new Label("比赛详情"),0,j+2);
                 grid.add(text,1,j+2);
                 j++;
@@ -377,8 +375,52 @@ public class MatchControl {
             );
             Begin.getChildren().add(in);
         }
+
+
     }
 
+    public String getResultString(CompetitionType competitionType, int number, int description) {
+        StringBuffer result = new StringBuffer();
+        result.append(number);
+        result.append("号选手");
+        result.append(competitionType.toString());
+        result.append("第");
+        result.append(description / 100000);
+        description = description % 100000;
+        result.append("局第");
+        int turn = description / 10000;
+        description = description % 10000;
+        if (turn == 0)
+            turn = 10;
+        result.append(turn);
+        result.append("轮第");
+        result.append(description / 1000);
+        description = description % 1000;
+        result.append("次投球");
+        int status = description / 100;
+        result.append(getStatus(status));
+        description = description % 100;
+        if (status == 2) {
+            result.append(description);
+            result.append("个");
+        }
+        return result.toString();
+    }
 
+    public String getStatus(int status) {
+        switch (status) {
+            case 0:
+                return "全中";
+            case 1:
+                return "补中";
+            case 2:
+                return "命中";
+            case 3:
+                return "犯规";
+            case 4:
+                return "未进行";
+        }
+        return "";
+    }
 
 }

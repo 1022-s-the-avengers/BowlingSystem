@@ -289,7 +289,7 @@ public class Member {
         boolean release = false;
         try{
             conn.setAutoCommit(false);
-            String sql = "SELECT * FROM Member GROUP BY totalScore";
+            String sql = "SELECT * FROM Member ORDER BY totalScore";
             exec = conn.prepareStatement(sql);
             r = exec.executeQuery();
             conn.commit();
@@ -547,7 +547,7 @@ public class Member {
             return 2;
         try{
             conn.setAutoCommit(false);
-            String querySQL = "SELECT * FROM Member GROUP BY totalScore DESC ";
+            String querySQL = "SELECT * FROM Member ORDER BY totalScore DESC LIMIT 16";
             exec = conn.prepareStatement(querySQL);
             r = exec.executeQuery();
             conn.commit();
@@ -579,6 +579,28 @@ public class Member {
             if(exec.executeUpdate()!=1)
                 return 5;
             conn.commit();
+        }catch (SQLException e){
+            return 4;
+        }finally {
+            release=DBConnection.release(conn, null, null);
+        }
+        if(!release)
+            return 5;
+        return 1;
+    }
+
+    public static int getCreditList(List<Member> res){
+        ResultSet r = null;
+        Connection conn = DBConnection.getConn();
+        if(DBConnection.judge(conn))
+            return 2;
+        PreparedStatement exec=null;
+        boolean release = false;
+        try{
+            String sql = "SELECT * FROM Member ORDER BY credit DESC LIMIT 16";
+            exec = conn.prepareStatement(sql);
+            r = exec.executeQuery();
+            generateMember(r, res);
         }catch (SQLException e){
             return 4;
         }finally {
